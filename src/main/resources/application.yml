@@ -17,5 +17,10 @@ spring:
 
 jwt:
   signer_key: "fb886b389ba6cd149a7deef483af664b62ff17776eb0d04a991251c0e4fba92e"
+<<<<<<< Updated upstream
   access-token-valid-duration: 1200 #in seconds : 20 minutes
   refresh-token-valid-duration: 604800 #a week
+=======
+  access-token-valid-duration: 3600 #in seconds : 20 minutes
+  refresh-token-valid-duration: 604800 #a week
+>>>>>>> Stashed changes
