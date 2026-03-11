@@ -13,6 +13,7 @@ import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import java.util.List;
 import com.acnecare.api.role.dto.request.RoleUpdateRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class RoleService {
         return roleMapper.toRoleResponse(role);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<RoleResponse> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
         return roleMapper.toRoleResponseList(roles);
