@@ -243,7 +243,7 @@ public class AuthenticationService {
                 )
             )
             .jwtID(UUID.randomUUID().toString())
-            .claim("roles", buildScope(user))
+            .claim("roles", buildScope(user)) //ROLE_ADMIN  READ, WRITE, DELETE
             .claim("type", "access")
             .build();
 
@@ -273,3 +273,15 @@ public class AuthenticationService {
     }
 
 }
+
+
+
+//jwt: header, payload, signature 
+
+//header: algorithm:SHA512, SHA256
+
+//Payload: subject, issuer, issueTime, expirationTime, jwtID, roles, type
+
+//signature: HMACSHA512(base64UrlEncode(header) + "." + base64UrlEncode(payload), secretKey)
+
+//

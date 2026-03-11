@@ -34,7 +34,6 @@ public class SecurityConfig {
     };
 
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> 

@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -32,7 +33,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    ApiResponse<UserResponse> createUser(@RequestBody UserCreationRequest request) {
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
             .code(1000)
             .message("User created successfully")

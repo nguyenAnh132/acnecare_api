@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleCreationRequest {
-
     String name;
     String description;
     List<String> permissions;

@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import com.acnecare.api.role.entity.Role;
 import java.util.Set;
 import lombok.Builder;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.CascadeType;
+import com.acnecare.api.patient.entity.PatientProfile;
 
 @Entity
 @Table(name = "users")
@@ -44,4 +47,7 @@ public class User {
 
     @ManyToMany
     Set<Role> roles;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    PatientProfile patientProfile;
 }

@@ -20,8 +20,8 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.ValidationException;
 
 
 @Service
@@ -94,11 +94,10 @@ public class UserService {
     }
 
 
-    @PostAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userMapper.toUserCreationResponses(userRepository.findAll());
     }
-
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteUser(String id) {
