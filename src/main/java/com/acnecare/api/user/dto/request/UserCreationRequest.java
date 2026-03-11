@@ -9,8 +9,13 @@ import lombok.AccessLevel;
 import java.time.LocalDate;
 import java.util.Set;
 
+import org.hibernate.validator.constraints.URL;
+
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Past;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,11 +26,23 @@ public class UserCreationRequest {
     @Size(min = 5, max = 100, message = "INVALID_FIRST_NAME")
     String firstName;
 
+    @Size(min = 5, max = 100, message = "INVALID_LAST_NAME")
     String lastName;
+
+    @Email(message = "INVALID_EMAIL")
     String email;
+
+    @Pattern(regexp = "^0[0-9]{9}$", message = "INVALID_PHONE")
     String phone;
+
+    @Size(min = 8, max = 100, message = "INVALID_PASSWORD")
     String password;
+
+    @Past(message = "INVALID_DOB")
     LocalDate dob;
+
+    @URL(message = "INVALID_AVATAR_URL")
     String avatarUrl;
+
     Set<String> roles;
 }

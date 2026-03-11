@@ -25,11 +25,24 @@ public enum ErrorCode {
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     ACCESS_DENIED(1008, "Access denied", HttpStatus.FORBIDDEN),
     INVALID_KEY(1009, "Invalid key", HttpStatus.BAD_REQUEST),
-    INVALID_FIRST_NAME(1010, "Invalid first name", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(1010, "Permission not found", HttpStatus.NOT_FOUND),
     PATIENT_PROFILE_NOT_FOUND(1011, "Patient profile not found", HttpStatus.NOT_FOUND),
     PATIENT_PROFILE_ALREADY_EXISTS(1012, "Patient profile already exists", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_ERROR(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+
+
+    //VALIDATION ERRORS
+    //patient profile
+    INVALID_FIRST_NAME(1010, "Invalid first name", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL(1013, "Invalid email", HttpStatus.BAD_REQUEST),
+    INVALID_LAST_NAME(1014, "Invalid last name", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE(1015, "Invalid phone", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1016, "Invalid password", HttpStatus.BAD_REQUEST),
+    INVALID_DOB(1017, "Invalid date of birth", HttpStatus.BAD_REQUEST),
+    INVALID_AVATAR_URL(1018, "Invalid avatar URL", HttpStatus.BAD_REQUEST),
+
+    //DOMAIN ERRORS
+
 
     ;
 
