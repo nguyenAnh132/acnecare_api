@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PatientProfileController {
     PatientProfileService patientProfileService;
 
-
     @GetMapping
     ApiResponse<PatientProfileResponse> getMyPatientProfile() {
         ApiResponse<PatientProfileResponse> apiResponse = new ApiResponse<>();
@@ -35,10 +34,10 @@ public class PatientProfileController {
     @PostMapping
     ApiResponse<PatientProfileResponse> createMyPatientProfile(@RequestBody PatientProfileCreationRequest request) {
         return ApiResponse.<PatientProfileResponse>builder()
-            .code(1000)
-            .message("Patient Profile has been created successfully")
-            .result(patientProfileService.createMyPatientProfile(request))
-            .build();
+                .code(1000)
+                .message("Patient Profile has been created successfully")
+                .result(patientProfileService.createMyPatientProfile(request))
+                .build();
     }
-    
+
 }
