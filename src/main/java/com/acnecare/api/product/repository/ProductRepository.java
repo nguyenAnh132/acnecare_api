@@ -15,4 +15,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     // Lấy sản phẩm trong 1 danh mục theo trạng thái (Dành cho Patient/Guest)
     List<Product> findByCategoryIdAndApprovalStatus(String categoryId, String approvalStatus);
+
+    boolean existsByCategoryId(String categoryId);
 }

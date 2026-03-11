@@ -8,6 +8,8 @@ import com.acnecare.api.category.mapper.CategoryMapper;
 import com.acnecare.api.category.repository.CategoryRepository;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
+import com.acnecare.api.product.repository.ProductRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +23,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryService {
     CategoryRepository categoryRepository;
+    ProductRepository productRepository;
     CategoryMapper categoryMapper;
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -43,8 +46,16 @@ public class CategoryService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteCategory(String id) {
+        // Kiểm tra xem danh mục có tồn tại không
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        // 2. LOGIC CHẶN XÓA: Kiểm tra xem có sản phẩm nào thuộc danh mục này không
+        if (productRepository.existsByCategoryId(id)) {
+            throw new AppException(ErrorCode.CATEGORY_IN_USE); // Ném lỗi 2003 vừa tạo
+        }
+
+        // Nếu qua được vòng kiểm tra trên thì mới cho phép xóa
         categoryRepository.delete(category);
     }
 

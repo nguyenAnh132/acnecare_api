@@ -46,12 +46,12 @@ public enum ErrorCode {
     // category
     CATEGORY_ALREADY_EXISTS(2001, "Category already exists", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_FOUND(2002, "Category not found", HttpStatus.NOT_FOUND),
-
+    CATEGORY_IN_USE(2003, "Cannot delete category because it still contains products", HttpStatus.BAD_REQUEST),
     // product
-    PRODUCT_NOT_FOUND(2003, "Product not found", HttpStatus.NOT_FOUND),
-    PRODUCT_ALREADY_EXISTS(2004, "Product name already exists", HttpStatus.BAD_REQUEST),
-    INVALID_PRODUCT_DATA(2005, "Invalid product data", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_APPROVED(2006, "Product is pending approval", HttpStatus.FORBIDDEN),
+    PRODUCT_NOT_FOUND(2004, "Product not found", HttpStatus.NOT_FOUND),
+    PRODUCT_ALREADY_EXISTS(2005, "Product name already exists", HttpStatus.BAD_REQUEST),
+    INVALID_PRODUCT_DATA(2006, "Invalid product data", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_APPROVED(2007, "Product is pending approval", HttpStatus.FORBIDDEN),
     ;
 
     int code;
