@@ -15,6 +15,7 @@ import org.hibernate.validator.constraints.URL;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -24,15 +25,18 @@ import jakarta.validation.constraints.Past;
 public class UserUpdateRequest {
     
     @Size(min = 1, max = 100, message = "INVALID_FIRST_NAME")
+    @NotBlank(message = "INVALID_FIRST_NAME")
     String firstName;
 
     @Size(min = 1, max = 100, message = "INVALID_LAST_NAME")
+    @NotBlank(message = "INVALID_LAST_NAME")
     String lastName;
 
     @Pattern(regexp = "^0[0-9]{9}$", message = "INVALID_PHONE")
     String phone;
 
     @Size(min = 8, max = 100, message = "INVALID_PASSWORD")
+    @NotBlank(message = "INVALID_PASSWORD")
     String password;
 
     @Past(message = "INVALID_DOB")
