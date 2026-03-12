@@ -23,10 +23,10 @@ import jakarta.validation.constraints.Past;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
     //validate first name
-    @Size(min = 5, max = 100, message = "INVALID_FIRST_NAME")
+    @Size(min = 1, max = 100, message = "INVALID_FIRST_NAME")
     String firstName;
 
-    @Size(min = 5, max = 100, message = "INVALID_LAST_NAME")
+    @Size(min = 1, max = 100, message = "INVALID_LAST_NAME")
     String lastName;
 
     @Email(message = "INVALID_EMAIL")

@@ -40,15 +40,7 @@ public class UserController {
             .result(userService.createUser(request))
             .build();
     }
-
-    @PutMapping("/{id}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String id, @RequestBody @Valid UserUpdateRequest request) {
-        return ApiResponse.<UserResponse>builder()
-            .code(1000)
-            .message("User updated successfully")
-            .result(userService.updateUser(id, request))
-            .build();
-    }
+    
 
     @GetMapping
     ApiResponse<List<UserResponse>> getAllUsers() {
@@ -59,6 +51,7 @@ public class UserController {
             .build();
     }
 
+
     @GetMapping("/{id}")
     ApiResponse<UserResponse> getUserById(@PathVariable String id) {
         return ApiResponse.<UserResponse>builder()
@@ -68,6 +61,17 @@ public class UserController {
             .build();
     }
 
+
+    @DeleteMapping("/{id}")
+    ApiResponse<Void> deleteUser(@PathVariable String id) {
+        userService.deleteUser(id);
+        return ApiResponse.<Void>builder()
+            .code(1000)
+            .message("User deleted successfully")
+            .build();
+    }
+
+
     @GetMapping("/me")
     ApiResponse<UserResponse> getMyInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -75,7 +79,7 @@ public class UserController {
             String roles = auth.getAuthorities().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(", "));
-            log.info("Roles from token: {}", roles);  // cần @Slf4j hoặc Logger
+            log.info("Roles from token: {}", roles); 
         }
         return ApiResponse.<UserResponse>builder()
             .code(1000)
@@ -84,12 +88,13 @@ public class UserController {
             .build();
     }
 
-    @DeleteMapping("/{id}")
-    ApiResponse<Void> deleteUser(@PathVariable String id) {
-        userService.deleteUser(id);
-        return ApiResponse.<Void>builder()
+
+    @PutMapping("/me")
+    ApiResponse<UserResponse> updateMyInfo(@RequestBody @Valid UserUpdateRequest request) {
+        return ApiResponse.<UserResponse>builder()
             .code(1000)
-            .message("User deleted successfully")
+            .message("User updated successfully")
+            .result(userService.updateMyInfo(request))
             .build();
     }
 }

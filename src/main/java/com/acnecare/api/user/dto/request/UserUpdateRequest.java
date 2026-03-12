@@ -10,18 +10,35 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.hibernate.validator.constraints.URL;
+
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Past;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
+    @Size(min = 1, max = 100, message = "INVALID_FIRST_NAME")
     String firstName;
+
+    @Size(min = 1, max = 100, message = "INVALID_LAST_NAME")
     String lastName;
+
+    @Pattern(regexp = "^0[0-9]{9}$", message = "INVALID_PHONE")
     String phone;
+
+    @Size(min = 8, max = 100, message = "INVALID_PASSWORD")
     String password;
+
+    @Past(message = "INVALID_DOB")
     LocalDate dob;
+
+    @URL(message = "INVALID_AVATAR_URL")
     String avatarUrl;
-    LocalDateTime updatedAt;
+
     Set<String> roles;
 }
