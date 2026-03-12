@@ -11,9 +11,14 @@ import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import java.util.Date;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 
 @Entity
-@Table(name = "invalidated_tokens")
+@Table(name = "invalidated_tokens", 
+    indexes = @Index(
+        name = "idx_expiry_time", 
+        columnList = "expiry_time ASC", 
+        unique = false))
 @Getter
 @Setter
 @NoArgsConstructor

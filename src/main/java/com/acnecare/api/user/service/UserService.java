@@ -1,4 +1,5 @@
 package com.acnecare.api.user.service;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
-import jakarta.validation.ValidationException;
-
 
 @Service
 @RequiredArgsConstructor
@@ -34,56 +33,35 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleReposity roleRepository;
 
+    //#region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
-            throw new AppException(ErrorCode.USER_ALREDY_EXISTS);
+            throw new AppException(ErrorCode.EMAIL_ALREDY_EXISTS);
 
         User user = userMapper.toUser(request);
-
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
         user.setStatus("ACTIVE");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         user.setRoles(getRolesFromRequest(request.getRoles()));
 
         userRepository.save(user);
 
         return userMapper.toUserCreationResponse(user);
     }
-
-
-    public UserResponse updateUser(String id, UserUpdateRequest request) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        userMapper.updateUser(request, user);
-
-        user.setUpdatedAt(LocalDateTime.now());
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        user.setRoles(getRolesFromRequest(request.getRoles()));
-
-        return userMapper.toUserCreationResponse(userRepository.save(user));
-    }
+    //#endregion
 
 
     private Set<Role> getRolesFromRequest(Set<String> roles) {
         if (roles != null && !roles.isEmpty()) {
             var validRoles = roleRepository.findAllById(roles);
-            if(roles.size() != validRoles.size())
+            if (roles.size() != validRoles.size())
                 throw new AppException(ErrorCode.ROLE_NOT_FOUND);
             return new HashSet<>(validRoles);
         } else {
             throw new AppException(ErrorCode.ROLE_NOT_PROVIDED);
         }
-    }
-  
-    public UserResponse getMyInfo() {
-        var context = SecurityContextHolder.getContext();
-        var userId = context.getAuthentication().getName();
-        return userMapper.toUserCreationResponse(userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 
 
@@ -99,9 +77,34 @@ public class UserService {
         return userMapper.toUserCreationResponses(userRepository.findAll());
     }
 
+
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteUser(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userRepository.delete(user);
+    }
+
+
+    public UserResponse getMyInfo() {
+        return userMapper.toUserCreationResponse(getMe());
+    }
+
+
+    private User getMe() {
+        var userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    }
+
+
+    public UserResponse updateMyInfo(UserUpdateRequest request) {
+        User user = getMe();
+
+        userMapper.updateUser(request, user);
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(getRolesFromRequest(request.getRoles()));
+
+        return userMapper.toUserCreationResponse(userRepository.save(user));
     }
 }

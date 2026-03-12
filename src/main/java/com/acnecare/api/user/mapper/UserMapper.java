@@ -11,7 +11,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
     @Mapping(target = "roles", ignore = true)
     User toUser(UserCreationRequest request);
 
@@ -21,6 +20,4 @@ public interface UserMapper {
     UserResponse toUserCreationResponse(User user);
 
     List<UserResponse> toUserCreationResponses(List<User> users);
-
-    
 }
