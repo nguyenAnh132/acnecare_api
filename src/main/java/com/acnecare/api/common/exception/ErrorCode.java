@@ -16,7 +16,7 @@ import lombok.AccessLevel;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum ErrorCode {
     // success: return 1000
-    USER_ALREDY_EXISTS(1001, "User already exists", HttpStatus.BAD_REQUEST),
+    EMAIL_ALREDY_EXISTS(1001, "Email already exists", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1002, "User not found", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(1003, "Role not found", HttpStatus.NOT_FOUND),
     ROLE_NOT_PROVIDED(1004, "Role not provided", HttpStatus.BAD_REQUEST),
@@ -52,6 +52,7 @@ public enum ErrorCode {
     PRODUCT_ALREADY_EXISTS(2005, "Product name already exists", HttpStatus.BAD_REQUEST),
     INVALID_PRODUCT_DATA(2006, "Invalid product data", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_APPROVED(2007, "Product is pending approval", HttpStatus.FORBIDDEN),
+
     ;
 
     int code;
