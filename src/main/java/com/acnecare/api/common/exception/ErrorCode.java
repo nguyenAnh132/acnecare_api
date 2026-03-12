@@ -1,21 +1,21 @@
 package com.acnecare.api.common.exception;
-
-import lombok.Getter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
 public enum ErrorCode {
-    //success: return 1000
+    // success: return 1000
     USER_ALREDY_EXISTS(1001, "User already exists", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1002, "User not found", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(1003, "Role not found", HttpStatus.NOT_FOUND),
@@ -25,15 +25,36 @@ public enum ErrorCode {
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     ACCESS_DENIED(1008, "Access denied", HttpStatus.FORBIDDEN),
     INVALID_KEY(1009, "Invalid key", HttpStatus.BAD_REQUEST),
-    INVALID_FIRST_NAME(1010, "Invalid first name", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(1010, "Permission not found", HttpStatus.NOT_FOUND),
+
     PATIENT_PROFILE_NOT_FOUND(1011, "Patient profile not found", HttpStatus.NOT_FOUND),
     PATIENT_PROFILE_ALREADY_EXISTS(1012, "Patient profile already exists", HttpStatus.BAD_REQUEST),
+
     UNCATEGORIZED_ERROR(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Brand profile error codes
-    BRAND_PROFILE_NOT_FOUND(3001, "Brand profile not found", HttpStatus.NOT_FOUND)
-    , BRAND_ALREADY_HAS_PROFILE(3002, "Brand already has a profile", HttpStatus.BAD_REQUEST)
+    BRAND_PROFILE_NOT_FOUND(3001, "Brand profile not found", HttpStatus.NOT_FOUND),
+    BRAND_ALREADY_HAS_PROFILE(3002, "Brand already has a profile", HttpStatus.BAD_REQUEST),
+    // VALIDATION ERRORS
+    // patient profile
+    INVALID_FIRST_NAME(1010, "Invalid first name", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL(1013, "Invalid email", HttpStatus.BAD_REQUEST),
+    INVALID_LAST_NAME(1014, "Invalid last name", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE(1015, "Invalid phone", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1016, "Invalid password", HttpStatus.BAD_REQUEST),
+    INVALID_DOB(1017, "Invalid date of birth", HttpStatus.BAD_REQUEST),
+    INVALID_AVATAR_URL(1018, "Invalid avatar URL", HttpStatus.BAD_REQUEST),
+
+    // DOMAIN ERRORS
+    // category
+    CATEGORY_ALREADY_EXISTS(2001, "Category already exists", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(2002, "Category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_IN_USE(2003, "Cannot delete category because it still contains products", HttpStatus.BAD_REQUEST),
+    // product
+    PRODUCT_NOT_FOUND(2004, "Product not found", HttpStatus.NOT_FOUND),
+    PRODUCT_ALREADY_EXISTS(2005, "Product name already exists", HttpStatus.BAD_REQUEST),
+    INVALID_PRODUCT_DATA(2006, "Invalid product data", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_APPROVED(2007, "Product is pending approval", HttpStatus.FORBIDDEN),
     ;
 
     int code;

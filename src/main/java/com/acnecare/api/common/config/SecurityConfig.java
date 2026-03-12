@@ -25,35 +25,42 @@ public class SecurityConfig {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
+    // ENDPOINT POST PUBLIC
     private final String[] PUBLIC_ENDPOINTS = {
-        "/users",
-        "/users/me",
-        "/auth/login",
-        "/auth/introspect",
-        "/auth/refresh",
+            "/users",
+            "/users/me",
+            "/auth/login",
+            "/auth/introspect",
+            "/auth/refresh",
     };
 
+    // ENDPOINT GET PUBLIC
+    private final String[] PUBLIC_ENDPOINTS_GET = {
+            "/categories",
+            "/categories/**",
+            "/products",
+            "/products/**",
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> 
-            request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-            .anyRequest().authenticated());
+        httpSecurity
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET).permitAll()
+                        .anyRequest().authenticated());
 
-        httpSecurity.oauth2ResourceServer(oauth2 -> 
-            oauth2.jwt(jwtConfigurer -> 
-                jwtConfigurer.decoder(customJwtDecoder)
-                    .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-        );
-        
+        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
+                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() { //custom 
+    JwtAuthenticationConverter jwtAuthenticationConverter() { // custom
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
@@ -62,7 +69,6 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-    
 
     @Bean
     PasswordEncoder passwordEncoder() {
