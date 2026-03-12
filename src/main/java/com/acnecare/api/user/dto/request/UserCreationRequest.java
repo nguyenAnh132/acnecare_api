@@ -12,6 +12,7 @@ import java.util.Set;
 import org.hibernate.validator.constraints.URL;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Past;
@@ -24,9 +25,11 @@ import jakarta.validation.constraints.Past;
 public class UserCreationRequest {
 
     @Size(min = 1, max = 100, message = "INVALID_FIRST_NAME")
+    @NotBlank(message = "INVALID_FIRST_NAME")
     String firstName;
 
     @Size(min = 1, max = 100, message = "INVALID_LAST_NAME")
+    @NotBlank(message = "INVALID_LAST_NAME")
     String lastName;
 
     @Email(message = "INVALID_EMAIL")
@@ -36,6 +39,7 @@ public class UserCreationRequest {
     String phone;
 
     @Size(min = 8, max = 100, message = "INVALID_PASSWORD")
+    @NotBlank(message = "INVALID_PASSWORD")
     String password;
 
     @Past(message = "INVALID_DOB")
