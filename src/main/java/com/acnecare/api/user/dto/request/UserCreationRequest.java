@@ -22,7 +22,7 @@ import jakarta.validation.constraints.Past;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    //validate first name
+
     @Size(min = 1, max = 100, message = "INVALID_FIRST_NAME")
     String firstName;
 

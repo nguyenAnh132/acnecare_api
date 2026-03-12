@@ -33,7 +33,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleReposity roleRepository;
 
-
+    //#region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_ALREDY_EXISTS);
@@ -50,6 +50,7 @@ public class UserService {
 
         return userMapper.toUserCreationResponse(user);
     }
+    //#endregion
 
 
     private Set<Role> getRolesFromRequest(Set<String> roles) {
