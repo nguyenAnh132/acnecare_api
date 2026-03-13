@@ -21,6 +21,7 @@ public class InvalidatedTokenCleanupJob {
         invalidatedTokenService.cleanInvalidatedTokens();
     }
 
-
-
 }
+
+//loogout: token invalidated => token cleanup job
+//checktoken: introspect : invalidated      jwt verify, expiryTime, exists in invalidatedToken table?
