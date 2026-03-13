@@ -110,6 +110,7 @@ public class AuthenticationService {
             .build();
     }
 
+
     public void logout(LogoutRequest request) 
             throws JOSEException, ParseException {
 

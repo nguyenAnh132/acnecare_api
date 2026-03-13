@@ -18,6 +18,8 @@ import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.acnecare.api.common.helper.CurrentUserId;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,26 +31,12 @@ public class PatientProfileService {
     PatientProfileRepository patientProfileRepository;
     PatientProfileMapper patientProfileMapper;
 
-    @PreAuthorize("hasAuthority('ROLE_PATIENT')")
-    public PatientProfileResponse createMyPatientProfile(PatientProfileCreationRequest request) {
-        var userId = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        var user = userRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        var alreadyExists = patientProfileRepository.findById(userId);
-        if (alreadyExists.isPresent()) {
-            throw new AppException(ErrorCode.PATIENT_PROFILE_ALREADY_EXISTS);
-        }
-
-        PatientProfile patientProfile = patientProfileMapper.toPatientProfile(request);
-        patientProfile.setUser(user);
-        patientProfile.setCreatedAt(LocalDateTime.now());
-        patientProfile.setUpdatedAt(LocalDateTime.now());
-
-        return patientProfileMapper
-            .toPatientProfileResponse(patientProfileRepository.save(patientProfile));
-    }
+    // @PreAuthorize("hasAuthority('ROLE_PATIENT')")
+    // public PatientProfileResponse createMyPatientProfile(User user) {
+    //     var userId = Optional.ofNullable(CurrentUserId.getCurrentUserId())
+    //         .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        
+    // }
 
 
     public PatientProfileResponse getPatientProfileById(String id) {
