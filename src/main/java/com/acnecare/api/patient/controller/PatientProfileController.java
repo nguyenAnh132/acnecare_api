@@ -31,13 +31,13 @@ public class PatientProfileController {
         return apiResponse;
     }
 
-    @PostMapping
-    ApiResponse<PatientProfileResponse> createMyPatientProfile(@RequestBody PatientProfileCreationRequest request) {
-        return ApiResponse.<PatientProfileResponse>builder()
-                .code(1000)
-                .message("Patient Profile has been created successfully")
-                .result(patientProfileService.createMyPatientProfile(request))
-                .build();
-    }
+    // @PostMapping
+    // ApiResponse<PatientProfileResponse> createMyPatientProfile(@RequestBody PatientProfileCreationRequest request) {
+    //     return ApiResponse.<PatientProfileResponse>builder()
+    //             .code(1000)
+    //             .message("Patient Profile has been created successfully")
+    //             .result(patientProfileService.createMyPatientProfile(request))
+    //             .build();
+    // }
 
 }
