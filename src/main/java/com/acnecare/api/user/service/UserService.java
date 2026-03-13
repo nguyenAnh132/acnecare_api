@@ -46,7 +46,7 @@ public class UserService {
         user.setLastLoginAt(LocalDateTime.now());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+      
         var role = getRolesFromRequest(request.getRoles());
         user.setRoles(role);
 
@@ -57,7 +57,6 @@ public class UserService {
         } else {
             user.setStatus(UserStatus.PENDING.name());
         }
-
         userRepository.save(user);
 
         return userMapper.toUserCreationResponse(user);

@@ -4,10 +4,9 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
-
-import com.acnecare.api.patient.dto.request.PatientProfileCreationRequest;
 import com.acnecare.api.patient.entity.PatientProfile;
 import com.acnecare.api.patient.repository.PatientProfileRepository;
+import com.acnecare.api.user.entity.User;
 import com.acnecare.api.user.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +15,10 @@ import com.acnecare.api.patient.dto.response.PatientProfileResponse;
 import java.time.LocalDateTime;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.acnecare.api.common.helper.CurrentUserId;
-import java.util.Optional;
+import com.acnecare.api.patient.dto.request.PatientProfileUpdateRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Service
 @RequiredArgsConstructor
@@ -31,22 +30,37 @@ public class PatientProfileService {
     PatientProfileRepository patientProfileRepository;
     PatientProfileMapper patientProfileMapper;
 
-    // @PreAuthorize("hasAuthority('ROLE_PATIENT')")
-    // public PatientProfileResponse createMyPatientProfile(User user) {
-    //     var userId = Optional.ofNullable(CurrentUserId.getCurrentUserId())
-    //         .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        
-    // }
 
+    public void createMyPatientProfile(User user) {
+        var userId = CurrentUserId.getCurrentUserId()
+            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-    public PatientProfileResponse getPatientProfileById(String id) {
-        PatientProfile patientProfile = patientProfileRepository.findById(id)
-            .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
+        var isAlreadyExists = patientProfileRepository.existsByUserId(userId);
+        if (isAlreadyExists) {
+            throw new AppException(ErrorCode.PATIENT_PROFILE_ALREADY_EXISTS);
+        }
+        PatientProfile patientProfile = new PatientProfile();
+        patientProfile.setUser(user);
+        patientProfile.setCreatedAt(LocalDateTime.now());
+        patientProfile.setUpdatedAt(LocalDateTime.now());
 
-        return patientProfileMapper.toPatientProfileResponse(patientProfile);
+        patientProfileRepository.save(patientProfile);
     }
 
 
+    @PreAuthorize("hasAuthority('ROLE_PATIENT')")
+    public PatientProfileResponse updateMyPatientProfile(PatientProfileUpdateRequest request) {
+        var userId = CurrentUserId.getCurrentUserId()
+            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var patientProfile = patientProfileRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
+        patientProfileMapper.updatePatientProfile(request, patientProfile);
+        patientProfile.setUpdatedAt(LocalDateTime.now());
+        return patientProfileMapper.toPatientProfileResponse(patientProfileRepository.save(patientProfile));
+    }
+
+
+    @PreAuthorize("hasAuthority('ROLE_PATIENT')")
     public PatientProfileResponse getMyPatientProfile() {
         var userId = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findById(userId)
@@ -57,4 +71,16 @@ public class PatientProfileService {
         }
         return getPatientProfileById(userId);
     }
+
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public PatientProfileResponse getPatientProfileById(String id) {
+        PatientProfile patientProfile = patientProfileRepository.findById(id)
+            .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
+
+        return patientProfileMapper.toPatientProfileResponse(patientProfile);
+    }
+
+
+    
 }
