@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 
 import com.acnecare.api.admin.entity.AdminProfile;
-import com.acnecare.api.admin.repository.AdminRepository;
+
 import com.acnecare.api.user.entity.User;
 import com.acnecare.api.user.repository.UserRepository;
 
@@ -26,6 +26,8 @@ import com.acnecare.api.common.helper.CurrentUserId;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.acnecare.api.admin.repository.AdminProfileRepository;
+
 @Service
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,7 +35,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public class AdminProfileService {
 
     private final UserRepository userRepository = null;
-    private final AdminRepository adminProfileRepository = null;
+    private final AdminProfileRepository adminProfileRepository = null;
     private final AdminProfileMapper adminProfileMapper = null;
 
     public void createMyAdminProfile(User user) {
