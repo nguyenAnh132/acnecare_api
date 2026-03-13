@@ -40,8 +40,6 @@ public class BrandProfile {
     String rejectionReason;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    String email;
-    String phone;
 
     @OneToOne
     @MapsId

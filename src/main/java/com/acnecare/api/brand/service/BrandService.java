@@ -2,9 +2,12 @@ package com.acnecare.api.brand.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties.Apiversion.Use;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.acnecare.api.brand.dto.request.AdminUpdateProfileBrandRequest;
 import com.acnecare.api.brand.dto.request.BrandProfileUpdateRequest;
 import com.acnecare.api.brand.dto.response.BrandProfileResponse;
 import com.acnecare.api.brand.entity.BrandProfile;
@@ -14,7 +17,6 @@ import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import com.acnecare.api.common.helper.CurrentUserId;
 import com.acnecare.api.user.entity.User;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
@@ -30,7 +32,7 @@ public class BrandService {
     BrandProfileRepository brandProfileRepository;
     BrandProfileMapper brandProfileMapper;
 
-    @PreAuthorize("(hasAuthority'ROLE_BRAND')")
+    @PreAuthorize("hasAuthority('ROLE_BRAND')")
     public BrandProfileResponse getMyBrandProfile(){
         var userId = CurrentUserId.getCurrentUserId()
         .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
@@ -39,7 +41,7 @@ public class BrandService {
         .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
 
         return brandProfileMapper.toBrandProfileResponse(brandProfile);
-    }
+    } 
 
     public void createMyBrandProfile(User user) {
         var userId = user.getId();
@@ -77,5 +79,15 @@ public class BrandService {
         .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
 
         return brandProfileMapper.toBrandProfileResponse(brandProfile);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public BrandProfileResponse updateBrandProfileByAdmin(String id, AdminUpdateProfileBrandRequest request) {
+        var brandProfile = brandProfileRepository.findById(id)
+        .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
+        brandProfile.setVerificationStatus(request.getVerificationStatus());
+        brandProfile.setRejectionReason(request.getRejectionReason());
+        brandProfile.setUpdatedAt(LocalDateTime.now());
+        return brandProfileMapper.toBrandProfileResponse(brandProfileRepository.save(brandProfile));
     }
 }

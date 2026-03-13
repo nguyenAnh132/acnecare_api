@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acnecare.api.brand.dto.request.AdminUpdateProfileBrandRequest;
 import com.acnecare.api.brand.dto.request.BrandProfileUpdateRequest;
 import com.acnecare.api.brand.dto.response.BrandProfileResponse;
 import com.acnecare.api.brand.service.BrandService;
@@ -41,7 +42,7 @@ public class BrandController {
             .message("Brand Profile has been updated successfully")
             .result(brandService.updateMyBrandProfile(request))
             .build();   
-}
+    }
 
     @GetMapping("/{id}")
     ApiResponse<BrandProfileResponse> getBrandProfileById(String id){
@@ -52,4 +53,12 @@ public class BrandController {
             .build();
     }
 
+    @PutMapping("/{id}/admin-update")
+    ApiResponse<BrandProfileResponse> updateBrandProfileByAdmin(@RequestBody @Valid AdminUpdateProfileBrandRequest request, String id){
+        return ApiResponse.<BrandProfileResponse>builder()
+            .code(1000)
+            .message("Brand Profile has been updated successfully")
+            .result(brandService.updateBrandProfileByAdmin(id, request))
+            .build();
+    }
 }
