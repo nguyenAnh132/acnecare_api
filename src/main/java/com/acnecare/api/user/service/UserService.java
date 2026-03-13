@@ -24,6 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
+import com.acnecare.api.patient.repository.PatientProfileRepository;
+import com.acnecare.api.doctor.repository.DoctorProfileRepository;
+import com.acnecare.api.brand.repository.BrandProfileRepository;
+import com.acnecare.api.admin.repository.AdminProfileRepository;
+import com.acnecare.api.patient.entity.PatientProfile;
+import com.acnecare.api.admin.entity.AdminProfile;
+import com.acnecare.api.doctor.entity.DoctorProfile;
+import com.acnecare.api.brand.entity.BrandProfile;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +42,10 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleReposity roleRepository;
+    PatientProfileRepository patientProfileRepository;
+    DoctorProfileRepository doctorProfileRepository;
+    BrandProfileRepository brandProfileRepository;
+    AdminProfileRepository adminProfileRepository;
 
     // #region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
@@ -44,20 +56,34 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
       
         var role = getRolesFromRequest(request.getRoles());
         user.setRoles(role);
-
-        Set<String> requestRoleNames = request.getRoles();
-
-        if (requestRoleNames != null && (requestRoleNames.contains("PATIENT") || requestRoleNames.contains("ADMIN"))) {
+        if (request.getRoles().contains("PATIENT") || request.getRoles().contains("ADMIN")) {
             user.setStatus(UserStatus.ACTIVE.name());
         } else {
             user.setStatus(UserStatus.PENDING.name());
         }
         userRepository.save(user);
+
+        if (request.getRoles().contains("PATIENT")) {
+            patientProfileRepository.save(PatientProfile.builder()
+                .user(user)
+                .build());
+        } else if (request.getRoles().contains("ADMIN")) {
+            adminProfileRepository.save(AdminProfile.builder()
+                .user(user)
+                .build());
+        } else if (request.getRoles().contains("DOCTOR")) {
+            doctorProfileRepository.save(DoctorProfile.builder()
+                .user(user)
+                .build());
+        } else if (request.getRoles().contains("BRAND")) {
+            brandProfileRepository.save(BrandProfile.builder()
+                .user(user)
+                .build());
+        }
 
         return userMapper.toUserCreationResponse(user);
     }

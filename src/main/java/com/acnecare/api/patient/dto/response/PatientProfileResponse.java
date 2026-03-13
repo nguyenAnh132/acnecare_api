@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PatientProfileResponse {
-    boolean gender; //true: male, false: female
+    boolean gender;
     String skinType;
     String allergies;
     double height;
