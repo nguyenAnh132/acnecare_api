@@ -1,5 +1,8 @@
 package com.acnecare.api.brand.entity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import com.acnecare.api.user.entity.User;
 
 import jakarta.persistence.Entity;
@@ -35,6 +38,8 @@ public class BrandProfile {
     String logoUrl;
     String verificationStatus;
     String rejectionReason;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
     String email;
     String phone;
 

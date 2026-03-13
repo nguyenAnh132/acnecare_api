@@ -36,6 +36,12 @@ public enum ErrorCode {
     // Brand profile error codes
     BRAND_PROFILE_NOT_FOUND(3001, "Brand profile not found", HttpStatus.NOT_FOUND),
     BRAND_ALREADY_HAS_PROFILE(3002, "Brand already has a profile", HttpStatus.BAD_REQUEST),
+    INVALID_BRAND_NAME(3003, "Invalid brand name", HttpStatus.BAD_REQUEST),
+    INVALID_DESCRIPTION(3004, "Invalid description", HttpStatus.BAD_REQUEST),
+    INVALID_WEBSITE(3005, "Invalid website", HttpStatus.BAD_REQUEST),
+    INVALID_LOGO_URL(3006, "Invalid logo URL", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL_BRAND(3007, "Invalid email", HttpStatus.BAD_REQUEST),
+    INVALID_PHONE_BRAND(3008, "Invalid phone", HttpStatus.BAD_REQUEST),
     // VALIDATION ERRORS
     // patient profile
     INVALID_FIRST_NAME(1010, "Invalid first name", HttpStatus.BAD_REQUEST),
