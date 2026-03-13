@@ -9,6 +9,8 @@ import com.acnecare.api.user.repository.UserRepository;
 import com.acnecare.api.user.mapper.UserMapper;
 import java.time.LocalDateTime;
 import com.acnecare.api.user.entity.User;
+import com.acnecare.api.user.enums.UserRole;
+import com.acnecare.api.user.enums.UserStatus;
 import com.acnecare.api.user.dto.request.UserCreationRequest;
 import com.acnecare.api.user.dto.response.UserResponse;
 import com.acnecare.api.common.exception.AppException;
@@ -33,7 +35,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleReposity roleRepository;
 
-    //#region PUBLIC METHODS
+    // #region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_ALREDY_EXISTS);
@@ -42,18 +44,27 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
-        user.setStatus("ACTIVE");
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(getRolesFromRequest(request.getRoles()));
+
+        var role = getRolesFromRequest(request.getRoles());
+        user.setRoles(role);
+
+        Set<String> requestRoleNames = request.getRoles();
+
+        if (requestRoleNames != null && (requestRoleNames.contains("PATIENT") || requestRoleNames.contains("ADMIN"))) {
+            user.setStatus(UserStatus.ACTIVE.name());
+        } else {
+            user.setStatus(UserStatus.PENDING.name());
+        }
 
         userRepository.save(user);
 
         return userMapper.toUserCreationResponse(user);
     }
-    //#endregion
+    // #endregion
 
-
-    private Set<Role> getRolesFromRequest(Set<String> roles) {
+    private Set<Role> getRolesFromRequest(Set<String> roles) { // USER ADMIN
         if (roles != null && !roles.isEmpty()) {
             var validRoles = roleRepository.findAllById(roles);
             if (roles.size() != validRoles.size())
@@ -64,19 +75,16 @@ public class UserService {
         }
     }
 
-
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserCreationResponse(user);
     }
 
-
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userMapper.toUserCreationResponses(userRepository.findAll());
     }
-
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteUser(String id) {
@@ -84,18 +92,26 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public UserResponse changeUserStatus(String id, String status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        user.setStatus(status);
+        user.setUpdatedAt(LocalDateTime.now());
+
+        return userMapper.toUserCreationResponse(userRepository.save(user));
+    }
 
     public UserResponse getMyInfo() {
         return userMapper.toUserCreationResponse(getMe());
     }
 
-
     private User getMe() {
         var userId = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
-
 
     public UserResponse updateMyInfo(UserUpdateRequest request) {
         User user = getMe();

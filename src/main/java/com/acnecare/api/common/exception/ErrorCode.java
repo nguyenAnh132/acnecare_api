@@ -26,6 +26,7 @@ public enum ErrorCode {
     ACCESS_DENIED(1008, "Access denied", HttpStatus.FORBIDDEN),
     INVALID_KEY(1009, "Invalid key", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(1010, "Permission not found", HttpStatus.NOT_FOUND),
+    USER_IS_BLOCKED(1019, "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin!", HttpStatus.FORBIDDEN),
 
     PATIENT_PROFILE_NOT_FOUND(1011, "Patient profile not found", HttpStatus.NOT_FOUND),
     PATIENT_PROFILE_ALREADY_EXISTS(1012, "Patient profile already exists", HttpStatus.BAD_REQUEST),

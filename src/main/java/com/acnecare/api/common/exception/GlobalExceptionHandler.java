@@ -49,9 +49,10 @@ public class GlobalExceptionHandler {
                 .body(apiResponse);
     }
 
+
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse<Void>> handlingValidation(MethodArgumentNotValidException exception){
-        String enumKey = exception.getFieldError().getDefaultMessage();
+        String enumKey = exception.getFieldError().getDefaultMessage(); //EXCEPTION MESSAGE : INVALID_FIRST_NAME
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler {
 
         }
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>();
+        ApiResponse<Void> apiResponse = new ApiResponse<>(); //Cấu trúc response result?
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(Objects.nonNull(attributes) ? mapAttrubute(errorCode.getMessage(), attributes) : errorCode.getMessage());
 
