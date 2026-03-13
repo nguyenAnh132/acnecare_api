@@ -33,9 +33,12 @@ public class ProductService {
     CategoryRepository categoryRepository;
     UserRepository userRepository;
 
-    // Cho phép Admin, Doctor và Brand được quyền thêm sản phẩm
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_BRAND')")
     public ProductResponse createProduct(ProductCreationRequest request) {
+        if (productRepository.existsByName(request.getName())) {
+            throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
+        }
+
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
@@ -48,7 +51,6 @@ public class ProductService {
         product.setCreatedBy(user);
         product.setCreatedAt(LocalDateTime.now());
 
-        // LOGIC TRẠNG THÁI: Nếu là Admin thì duyệt luôn, ngược lại thì chờ duyệt
         boolean isAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
@@ -61,10 +63,14 @@ public class ProductService {
         return productMapper.toProductResponse(productRepository.save(product));
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_BRAND')")
     public ProductResponse updateProduct(String id, ProductUpdateRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        if (!product.getName().equals(request.getName()) && productRepository.existsByName(request.getName())) {
+            throw new AppException(ErrorCode.PRODUCT_ALREADY_EXISTS);
+        }
 
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
@@ -82,7 +88,6 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    // LOGIC LẤY DANH SÁCH: Phân loại hiển thị theo Role
     public List<ProductResponse> getAllProducts() {
         if (isInternalStaff()) {
             return productMapper.toProductResponseList(productRepository.findAll());
@@ -90,14 +95,11 @@ public class ProductService {
         return productMapper.toProductResponseList(productRepository.findByApprovalStatus("APPROVED"));
     }
 
-    // LOGIC LẤY DANH SÁCH THEO CATEGORY
     public List<ProductResponse> getProductsByCategoryId(String categoryId) {
-        // 1. Kiểm tra Category có tồn tại không trước khi làm việc khác
         if (!categoryRepository.existsById(categoryId)) {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
-        // 2. Nếu tồn tại, tiến hành lấy danh sách sản phẩm theo Role
         if (isInternalStaff()) {
             return productMapper.toProductResponseList(productRepository.findByCategoryId(categoryId));
         }
@@ -105,11 +107,8 @@ public class ProductService {
                 .toProductResponseList(productRepository.findByCategoryIdAndApprovalStatus(categoryId, "APPROVED"));
     }
 
-    // Hàm phụ trợ kiểm tra xem người dùng đang gọi API có phải là
-    // Admin/Doctor/Brand không
     private boolean isInternalStaff() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        // Nếu không có token (khách) hoặc chưa xác thực
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             return false;
         }

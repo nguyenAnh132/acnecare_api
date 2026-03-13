@@ -23,5 +23,6 @@ public class InvalidatedTokenCleanupJob {
 
 }
 
-//loogout: token invalidated => token cleanup job
-//checktoken: introspect : invalidated      jwt verify, expiryTime, exists in invalidatedToken table?
+// loogout: token invalidated => token cleanup job
+// checktoken: introspect : invalidated jwt verify, expiryTime, exists in
+// invalidatedToken table?

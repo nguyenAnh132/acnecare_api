@@ -5,6 +5,8 @@ import com.acnecare.api.product.dto.request.ProductCreationRequest;
 import com.acnecare.api.product.dto.request.ProductUpdateRequest;
 import com.acnecare.api.product.dto.response.ProductResponse;
 import com.acnecare.api.product.service.ProductService;
+
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +26,7 @@ public class ProductController {
     // nếu không muốn,
     // nhưng gán ở cả Service và Controller là an toàn nhất.
     @PostMapping
-    ApiResponse<ProductResponse> createProduct(@RequestBody ProductCreationRequest request) {
+    ApiResponse<ProductResponse> createProduct(@Valid @RequestBody ProductCreationRequest request) {
         return ApiResponse.<ProductResponse>builder()
                 .code(1000)
                 .message("Product created successfully")
@@ -33,7 +35,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    ApiResponse<ProductResponse> updateProduct(@PathVariable String id, @RequestBody ProductUpdateRequest request) {
+    ApiResponse<ProductResponse> updateProduct(@PathVariable String id,
+            @Valid @RequestBody ProductUpdateRequest request) {
         return ApiResponse.<ProductResponse>builder()
                 .code(1000)
                 .message("Product updated successfully")
