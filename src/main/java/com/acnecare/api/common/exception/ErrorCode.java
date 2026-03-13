@@ -66,8 +66,11 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(2004, "Product not found", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS(2005, "Product name already exists", HttpStatus.BAD_REQUEST),
     INVALID_PRODUCT_DATA(2006, "Invalid product data", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_APPROVED(2007, "Product is pending approval", HttpStatus.FORBIDDEN),
-
+    PRODUCT_NOT_APPROVED(2007, "Product is pending approval", HttpStatus.FORBIDDEN), 
+    // admin profile
+    ADMIN_PROFILE_ALREADY_EXISTS(3008, "Admin profile already exists", HttpStatus.BAD_REQUEST),
+    ADMIN_PROFILE_NOT_FOUND(3009, "Admin profile not found", HttpStatus.NOT_FOUND)
+    
     ;
 
     int code;
