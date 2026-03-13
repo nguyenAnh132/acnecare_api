@@ -45,7 +45,6 @@ public class UserService {
         user.setStatus("ACTIVE");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(getRolesFromRequest(request.getRoles()));
-
         userRepository.save(user);
 
         return userMapper.toUserCreationResponse(user);
