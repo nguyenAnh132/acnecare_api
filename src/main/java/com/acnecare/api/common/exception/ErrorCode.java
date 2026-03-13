@@ -1,4 +1,5 @@
 package com.acnecare.api.common.exception;
+
 import lombok.experimental.FieldDefaults;
 
 import org.springframework.http.HttpStatus;
@@ -63,17 +64,11 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(2002, "Category not found", HttpStatus.NOT_FOUND),
     CATEGORY_IN_USE(2003, "Cannot delete category because it still contains products", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_NAME(2004, "Invalid category name", HttpStatus.BAD_REQUEST),
-    // product
-<<<<<<< Updated upstream
-    PRODUCT_NOT_FOUND(2004, "Product not found", HttpStatus.NOT_FOUND),
-    PRODUCT_ALREADY_EXISTS(2005, "Product name already exists", HttpStatus.BAD_REQUEST),
-    INVALID_PRODUCT_DATA(2006, "Invalid product data", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_APPROVED(2007, "Product is pending approval", HttpStatus.FORBIDDEN), 
+
     // admin profile
     ADMIN_PROFILE_ALREADY_EXISTS(3008, "Admin profile already exists", HttpStatus.BAD_REQUEST),
-    ADMIN_PROFILE_NOT_FOUND(3009, "Admin profile not found", HttpStatus.NOT_FOUND)
-    
-=======
+    ADMIN_PROFILE_NOT_FOUND(3009, "Admin profile not found", HttpStatus.NOT_FOUND),
+
     PRODUCT_NOT_FOUND(2005, "Product not found", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS(2006, "Product name already exists", HttpStatus.BAD_REQUEST),
     INVALID_PRODUCT_DATA(2007, "Invalid product data", HttpStatus.BAD_REQUEST),
@@ -84,7 +79,6 @@ public enum ErrorCode {
     INVALID_PRODUCT_URL(2012, "Đường dẫn (URL) không đúng định dạng", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_ID(2013, "Danh mục sản phẩm (Category ID) không được để trống", HttpStatus.BAD_REQUEST),
 
->>>>>>> Stashed changes
     ;
 
     int code;
