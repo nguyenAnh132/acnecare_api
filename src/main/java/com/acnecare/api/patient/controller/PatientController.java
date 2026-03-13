@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import com.acnecare.api.common.dto.ApiResponse;
 import com.acnecare.api.patient.dto.response.PatientProfileResponse;
-import com.acnecare.api.patient.service.PatientProfileService;
 import com.acnecare.api.patient.dto.request.PatientProfileUpdateRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import jakarta.validation.Valid;
@@ -17,21 +16,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import lombok.extern.slf4j.Slf4j;
+import com.acnecare.api.patient.service.PatientService;
 
 @RestController
 @RequestMapping("/patients")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class PatientProfileController {
-    PatientProfileService patientProfileService;
+public class PatientController {
+    PatientService patientService;
 
     @PutMapping
     ApiResponse<PatientProfileResponse> updatePatientProfile(@RequestBody @Valid PatientProfileUpdateRequest request) {
         return ApiResponse.<PatientProfileResponse>builder()
                 .code(1000)
                 .message("Patient Profile has been updated successfully")
-                .result(patientProfileService.updateMyPatientProfile(request))
+                .result(patientService.updateMyPatientProfile(request))
                 .build();
     }
 
@@ -41,7 +41,7 @@ public class PatientProfileController {
         return ApiResponse.<PatientProfileResponse>builder()
                 .code(1000)
                 .message("Patient Profile has been retrieved successfully")
-                .result(patientProfileService.getMyPatientProfile())
+                .result(patientService.getMyPatientProfile())
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class PatientProfileController {
         return ApiResponse.<PatientProfileResponse>builder()
                 .code(1000)
                 .message("Patient Profile has been retrieved successfully")
-                .result(patientProfileService.getPatientProfileById(id))
+                .result(patientService.getPatientProfileById(id))
                 .build();
     }
 

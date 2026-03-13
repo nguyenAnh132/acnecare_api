@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 
-public class BrandProfileService {
+public class BrandService {
     BrandProfileRepository brandProfileRepository;
     BrandProfileMapper brandProfileMapper;
 
@@ -41,7 +41,7 @@ public class BrandProfileService {
         return brandProfileMapper.toBrandProfileResponse(brandProfile);
     }
 
-    public void createBrandProfile(User user) {
+    public void createMyBrandProfile(User user) {
         var userId = user.getId();
         var alreadyExists = brandProfileRepository.findById(userId);
         if (alreadyExists.isPresent()) {

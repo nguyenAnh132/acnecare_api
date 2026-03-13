@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acnecare.api.brand.dto.request.BrandProfileUpdateRequest;
 import com.acnecare.api.brand.dto.response.BrandProfileResponse;
-import com.acnecare.api.brand.service.BrandProfileService;
+import com.acnecare.api.brand.service.BrandService;
 import com.acnecare.api.common.dto.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -23,13 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 
-public class BrandProfileController {
-    BrandProfileService brandProfileService;
+public class BrandController {
+    BrandService brandService;
 
     @GetMapping
     ApiResponse<BrandProfileResponse> getMyBrandProfile() {
         ApiResponse<BrandProfileResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(brandProfileService.getMyBrandProfile());
+        apiResponse.setResult(brandService.getMyBrandProfile());
 
         return apiResponse;
     }    
@@ -39,7 +39,7 @@ public class BrandProfileController {
         return ApiResponse.<BrandProfileResponse>builder()
             .code(1000)
             .message("Brand Profile has been updated successfully")
-            .result(brandProfileService.updateMyBrandProfile(request))
+            .result(brandService.updateMyBrandProfile(request))
             .build();   
 }
 
@@ -48,7 +48,7 @@ public class BrandProfileController {
         return ApiResponse.<BrandProfileResponse>builder()
             .code(1000)
             .message("Brand Profile has been retrieved successfully")
-            .result(brandProfileService.getBrandProfileById(id))
+            .result(brandService.getBrandProfileById(id))
             .build();
     }
 

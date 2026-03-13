@@ -37,7 +37,7 @@ public class DoctorService {
         return doctorProfileMapper.toDoctorProfileResponse(doctorProfile);
     }
 
-    public void createDoctorProfile(User user) {
+    public void createMyDoctorProfile(User user) {
         var userId = user.getId();
         var alreadyExists = doctorProfileRepository.findById(userId);
         if (alreadyExists.isPresent()) {

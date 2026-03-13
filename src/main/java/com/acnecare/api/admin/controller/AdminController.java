@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acnecare.api.admin.dto.response.AdminProfileResponse;
-import com.acnecare.api.admin.service.AdminProfileService;
+import com.acnecare.api.admin.service.AdminService;
 import com.acnecare.api.common.dto.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -19,16 +19,16 @@ import lombok.AccessLevel;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class AdminProfileController {
+public class AdminController {
 
-    AdminProfileService adminProfileService;
+    AdminService adminService;
 
     @GetMapping
     ApiResponse<AdminProfileResponse> getMyAdminProfile() {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been retrieved successfully")
-                .result(adminProfileService.getMyAdminProfile())
+                .result(adminService.getMyAdminProfile())
                 .build();
     }
 
@@ -37,7 +37,7 @@ public class AdminProfileController {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been retrieved successfully")
-                .result(adminProfileService.getAdminProfileById(id))
+                .result(adminService.getAdminProfileById(id))
                 .build();
     }
 
@@ -46,7 +46,7 @@ public class AdminProfileController {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been updated successfully")
-                .result(adminProfileService.updateMyAdminProfile())
+                .result(adminService.updateMyAdminProfile())
                 .build();
     }
 
