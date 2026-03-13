@@ -8,6 +8,7 @@ import com.acnecare.api.common.dto.ApiResponse;
 import com.acnecare.api.product.dto.response.ProductResponse;
 import com.acnecare.api.product.service.ProductService;
 
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +25,7 @@ public class CategoryController {
     ProductService productService;
 
     @PostMapping
-    ApiResponse<CategoryResponse> createCategory(@RequestBody CategoryCreationRequest request) {
+    ApiResponse<CategoryResponse> createCategory(@Valid @RequestBody CategoryCreationRequest request) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(1000)
                 .message("Category created successfully")
@@ -33,7 +34,8 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    ApiResponse<CategoryResponse> updateCategory(@PathVariable String id, @RequestBody CategoryUpdateRequest request) {
+    ApiResponse<CategoryResponse> updateCategory(@PathVariable String id,
+            @Valid @RequestBody CategoryUpdateRequest request) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(1000)
                 .message("Category updated successfully")

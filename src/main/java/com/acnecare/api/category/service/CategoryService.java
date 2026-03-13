@@ -31,6 +31,7 @@ public class CategoryService {
         if (categoryRepository.existsByName(request.getName())) {
             throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
+
         Category category = categoryMapper.toCategory(request);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
     }
@@ -50,21 +51,17 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        // 2. LOGIC CHẶN XÓA: Kiểm tra xem có sản phẩm nào thuộc danh mục này không
         if (productRepository.existsByCategoryId(id)) {
-            throw new AppException(ErrorCode.CATEGORY_IN_USE); // Ném lỗi 2003 vừa tạo
+            throw new AppException(ErrorCode.CATEGORY_IN_USE);
         }
 
-        // Nếu qua được vòng kiểm tra trên thì mới cho phép xóa
         categoryRepository.delete(category);
     }
 
-    // Không có @PreAuthorize vì Public cho phép xem
     public List<CategoryResponse> getAllCategories() {
         return categoryMapper.toCategoryResponseList(categoryRepository.findAll());
     }
 
-    // Không có @PreAuthorize vì Public cho phép xem
     public CategoryResponse getCategoryById(String id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
