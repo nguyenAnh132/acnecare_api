@@ -57,7 +57,12 @@ public enum ErrorCode {
     INVALID_PASSWORD(1016, "Invalid password", HttpStatus.BAD_REQUEST),
     INVALID_DOB(1017, "Invalid date of birth", HttpStatus.BAD_REQUEST),
     INVALID_AVATAR_URL(1018, "Invalid avatar URL", HttpStatus.BAD_REQUEST),
-
+    INVALID_GENDER(1019, "Invalid gender", HttpStatus.BAD_REQUEST),
+    INVALID_SKIN_TYPE(1020, "Invalid skin type", HttpStatus.BAD_REQUEST),
+    INVALID_ALLERGIES(1021, "Invalid allergies", HttpStatus.BAD_REQUEST),
+    INVALID_HEIGHT(1022, "Invalid height", HttpStatus.BAD_REQUEST),
+    INVALID_WEIGHT(1023, "Invalid weight", HttpStatus.BAD_REQUEST),
+    INVALID_ADDRESS(1024, "Invalid address", HttpStatus.BAD_REQUEST),
     // DOMAIN ERRORS
     // category
     CATEGORY_ALREADY_EXISTS(2001, "Category already exists", HttpStatus.BAD_REQUEST),
