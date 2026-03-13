@@ -32,7 +32,7 @@ import com.acnecare.api.admin.repository.AdminProfileRepository;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class AdminProfileService {
+public class AdminService {
 
     private final UserRepository userRepository = null;
     private final AdminProfileRepository adminProfileRepository = null;

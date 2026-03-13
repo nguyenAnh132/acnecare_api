@@ -9,7 +9,6 @@ import com.acnecare.api.user.repository.UserRepository;
 import com.acnecare.api.user.mapper.UserMapper;
 import java.time.LocalDateTime;
 import com.acnecare.api.user.entity.User;
-import com.acnecare.api.user.enums.UserRole;
 import com.acnecare.api.user.enums.UserStatus;
 import com.acnecare.api.user.dto.request.UserCreationRequest;
 import com.acnecare.api.user.dto.response.UserResponse;
@@ -24,14 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
-import com.acnecare.api.patient.repository.PatientProfileRepository;
-import com.acnecare.api.doctor.repository.DoctorProfileRepository;
-import com.acnecare.api.brand.repository.BrandProfileRepository;
-import com.acnecare.api.admin.repository.AdminProfileRepository;
-import com.acnecare.api.patient.entity.PatientProfile;
-import com.acnecare.api.admin.entity.AdminProfile;
-import com.acnecare.api.doctor.entity.DoctorProfile;
-import com.acnecare.api.brand.entity.BrandProfile;
+import com.acnecare.api.patient.service.PatientService;
+import com.acnecare.api.doctor.service.DoctorService;
+import com.acnecare.api.brand.service.BrandService;
+import com.acnecare.api.admin.service.AdminService;
+
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +38,11 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleReposity roleRepository;
-    PatientProfileRepository patientProfileRepository;
-    DoctorProfileRepository doctorProfileRepository;
-    BrandProfileRepository brandProfileRepository;
-    AdminProfileRepository adminProfileRepository;
+    PatientService patientService;
+    DoctorService doctorService;
+    BrandService brandService;
+    AdminService adminService;
+    
 
     // #region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
@@ -68,21 +65,13 @@ public class UserService {
         userRepository.save(user);
 
         if (request.getRoles().contains("PATIENT")) {
-            patientProfileRepository.save(PatientProfile.builder()
-                .user(user)
-                .build());
+                patientService.createMyPatientProfile(user);
         } else if (request.getRoles().contains("ADMIN")) {
-            adminProfileRepository.save(AdminProfile.builder()
-                .user(user)
-                .build());
+            adminService.createMyAdminProfile(user);
         } else if (request.getRoles().contains("DOCTOR")) {
-            doctorProfileRepository.save(DoctorProfile.builder()
-                .user(user)
-                .build());
+            doctorService.createMyDoctorProfile(user);
         } else if (request.getRoles().contains("BRAND")) {
-            brandProfileRepository.save(BrandProfile.builder()
-                .user(user)
-                .build());
+            brandService.createMyBrandProfile(user);
         }
 
         return userMapper.toUserCreationResponse(user);
