@@ -41,8 +41,6 @@ public enum ErrorCode {
     INVALID_DESCRIPTION(3004, "Invalid description", HttpStatus.BAD_REQUEST),
     INVALID_WEBSITE(3005, "Invalid website", HttpStatus.BAD_REQUEST),
     INVALID_LOGO_URL(3006, "Invalid logo URL", HttpStatus.BAD_REQUEST),
-    INVALID_EMAIL_BRAND(3007, "Invalid email", HttpStatus.BAD_REQUEST),
-    INVALID_PHONE_BRAND(3008, "Invalid phone", HttpStatus.BAD_REQUEST),
 
     // Doctor profile error codes
     DOCTOR_PROFILE_NOT_FOUND(3011, "Doctor profile not found", HttpStatus.NOT_FOUND),
