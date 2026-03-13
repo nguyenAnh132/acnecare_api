@@ -16,7 +16,7 @@ public class InvalidatedTokenCleanupJob {
 
     InvalidatedTokenService invalidatedTokenService;
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Ho_Chi_Minh") // xóa token vào 1h sáng hằng ngày
     public void execute() {
         invalidatedTokenService.cleanInvalidatedTokens();
     }
