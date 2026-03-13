@@ -1,6 +1,7 @@
 package com.acnecare.api.brand.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,8 +45,8 @@ public class BrandController {
             .build();   
     }
 
-    @GetMapping("/{id}")
-    ApiResponse<BrandProfileResponse> getBrandProfileById(String id){
+    @GetMapping("/profile/{id}")
+    ApiResponse<BrandProfileResponse> getBrandProfileById(@PathVariable String id){
         return ApiResponse.<BrandProfileResponse>builder()
             .code(1000)
             .message("Brand Profile has been retrieved successfully")
@@ -53,8 +54,8 @@ public class BrandController {
             .build();
     }
 
-    @PutMapping("/{id}/admin-update")
-    ApiResponse<BrandProfileResponse> updateBrandProfileByAdmin(@RequestBody @Valid AdminUpdateProfileBrandRequest request, String id){
+    @PutMapping("/profile/{id}")
+    ApiResponse<BrandProfileResponse> updateBrandProfileByAdmin(@PathVariable String id, @RequestBody @Valid AdminUpdateProfileBrandRequest request){
         return ApiResponse.<BrandProfileResponse>builder()
             .code(1000)
             .message("Brand Profile has been updated successfully")
