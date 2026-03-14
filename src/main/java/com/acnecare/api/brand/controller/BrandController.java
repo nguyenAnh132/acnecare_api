@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BrandController {
     BrandService brandService;
 
-    @GetMapping
+    @GetMapping("/profile/me")
     ApiResponse<BrandProfileResponse> getMyBrandProfile() {
         ApiResponse<BrandProfileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(brandService.getMyBrandProfile());
@@ -36,7 +36,7 @@ public class BrandController {
         return apiResponse;
     }    
     
-    @PutMapping
+    @PutMapping("/profile/me")
     ApiResponse<BrandProfileResponse> updateBrandProfile(@RequestBody @Valid BrandProfileUpdateRequest request) {
         return ApiResponse.<BrandProfileResponse>builder()
             .code(1000)

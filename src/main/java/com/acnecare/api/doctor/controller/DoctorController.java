@@ -27,8 +27,8 @@ public class DoctorController {
 
     DoctorService doctorProfileService;
 
-    @PutMapping
-    ApiResponse<DoctorProfileResponse> updateDoctorProfile(@RequestBody @Valid DoctorProfileUpdateRequest request) {
+    @PutMapping("/profile/me")
+    ApiResponse<DoctorProfileResponse> updateMyDoctorProfile(@RequestBody @Valid DoctorProfileUpdateRequest request) {
         return ApiResponse.<DoctorProfileResponse>builder()
                 .code(1000)
                 .message("Doctor Profile has been updated successfully")
@@ -36,7 +36,7 @@ public class DoctorController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("/profile/me")
     ApiResponse<DoctorProfileResponse> getMyDoctorProfile() {
         return ApiResponse.<DoctorProfileResponse>builder()
                 .code(1000)
@@ -45,7 +45,7 @@ public class DoctorController {
                 .build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/profile/{id}")
     ApiResponse<DoctorProfileResponse> getDoctorProfileById(@PathVariable String id) {
         return ApiResponse.<DoctorProfileResponse>builder()
                 .code(1000)
