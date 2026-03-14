@@ -2,6 +2,8 @@ package com.acnecare.api.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -28,7 +30,6 @@ import com.acnecare.api.doctor.service.DoctorService;
 import com.acnecare.api.brand.service.BrandService;
 import com.acnecare.api.admin.service.AdminService;
 
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -42,7 +43,6 @@ public class UserService {
     DoctorService doctorService;
     BrandService brandService;
     AdminService adminService;
-    
 
     // #region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
@@ -54,7 +54,7 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-      
+
         var role = getRolesFromRequest(request.getRoles());
         user.setRoles(role);
         if (request.getRoles().contains("PATIENT") || request.getRoles().contains("ADMIN")) {
@@ -65,7 +65,7 @@ public class UserService {
         userRepository.save(user);
 
         if (request.getRoles().contains("PATIENT")) {
-                patientService.createMyPatientProfile(user);
+            patientService.createMyPatientProfile(user);
         } else if (request.getRoles().contains("ADMIN")) {
             adminService.createMyAdminProfile(user);
         } else if (request.getRoles().contains("DOCTOR")) {
@@ -90,12 +90,14 @@ public class UserService {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserCreationResponse(user);
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         return userMapper.toUserCreationResponses(userRepository.findAll());
     }
@@ -117,10 +119,12 @@ public class UserService {
         return userMapper.toUserCreationResponse(userRepository.save(user));
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getMyInfo() {
         return userMapper.toUserCreationResponse(getMe());
     }
 
+    @Transactional(readOnly = true)
     private User getMe() {
         var userId = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findById(userId)
