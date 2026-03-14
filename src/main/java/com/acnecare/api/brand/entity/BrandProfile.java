@@ -1,6 +1,4 @@
 package com.acnecare.api.brand.entity;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.acnecare.api.user.entity.User;
