@@ -2,6 +2,8 @@ package com.acnecare.api.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -88,12 +90,14 @@ public class UserService {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserCreationResponse(user);
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         return userMapper.toUserCreationResponses(userRepository.findAll());
     }
@@ -115,10 +119,12 @@ public class UserService {
         return userMapper.toUserCreationResponse(userRepository.save(user));
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getMyInfo() {
         return userMapper.toUserCreationResponse(getMe());
     }
 
+    @Transactional(readOnly = true)
     private User getMe() {
         var userId = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findById(userId)
