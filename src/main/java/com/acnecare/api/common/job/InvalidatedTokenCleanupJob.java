@@ -16,13 +16,9 @@ public class InvalidatedTokenCleanupJob {
 
     InvalidatedTokenService invalidatedTokenService;
 
-    @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Ho_Chi_Minh") // xóa token vào 1h sáng hằng ngày
+    @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Ho_Chi_Minh")
     public void execute() {
         invalidatedTokenService.cleanInvalidatedTokens();
     }
 
 }
-
-// loogout: token invalidated => token cleanup job
-// checktoken: introspect : invalidated jwt verify, expiryTime, exists in
-// invalidatedToken table?
