@@ -40,6 +40,9 @@ public class SecurityConfig {
             "/auth/login",
             "/auth/introspect",
             "/auth/refresh",
+            "/messages/**",
+            "/chatroom/**",
+            "/messages/"
     };
 
     // ENDPOINT GET PUBLIC
@@ -48,6 +51,9 @@ public class SecurityConfig {
             "/categories/**",
             "/products",
             "/products/**",
+            "/chatroom/**",
+            "/messages/**",
+            "/messages/"
     };
 
     @Bean

@@ -28,54 +28,54 @@ public class ApplicationInitConfig {
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleReposity roleRepository) {
         return args -> {
-            if( !userRepository.existsByEmail("admin@gmail.com") 
-                && !roleRepository.existsByName("ADMIN") 
-                && !roleRepository.existsByName("PATIENT") 
-                && !roleRepository.existsByName("DOCTOR") 
-                && !roleRepository.existsByName("BRAND") ) {
+            if (!userRepository.existsByEmail("admin@gmail.com")
+                    && !roleRepository.existsByName("ADMIN")
+                    && !roleRepository.existsByName("PATIENT")
+                    && !roleRepository.existsByName("DOCTOR")
+                    && !roleRepository.existsByName("BRAND")) {
 
                 roleRepository.save(Role.builder()
-                    .name("ADMIN")
-                    .description("Admin role")
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-                
-                roleRepository.save(Role.builder()
-                    .name("PATIENT")
-                    .description("Patient role")
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
+                        .name("ADMIN")
+                        .description("Admin role")
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
 
                 roleRepository.save(Role.builder()
-                    .name("DOCTOR")
-                    .description("Doctor role")
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-                
+                        .name("PATIENT")
+                        .description("Patient role")
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+
                 roleRepository.save(Role.builder()
-                    .name("BRAND")
-                    .description("Brand role")
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-                
+                        .name("DOCTOR")
+                        .description("Doctor role")
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+
+                roleRepository.save(Role.builder()
+                        .name("BRAND")
+                        .description("Brand role")
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+
                 userRepository.save(User.builder()
-                    .email("admin@gmail.com")
-                    .password(passwordEncoder.encode("12345678"))
-                    .roles(Set.of(roleRepository.findById("ADMIN").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND))))
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .lastLoginAt(LocalDateTime.now())
-                    .status("ACTIVE")
-                    .lastName("Admin")
-                    .build());
+                        .email("admin@gmail.com")
+                        .password(passwordEncoder.encode("12345678"))
+                        .roles(Set.of(roleRepository.findById("ADMIN")
+                                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND))))
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .lastLoginAt(LocalDateTime.now())
+                        .status("ACTIVE")
+                        .lastName("Admin")
+                        .build());
 
             }
 
-            
         };
     }
 
