@@ -2,6 +2,7 @@
 package com.acnecare.api.doctor.entity;
 
 import com.acnecare.api.consultation_service.entity.ConsultationService;
+import com.acnecare.api.doctorschedule.entity.DoctorSchedule;
 import com.acnecare.api.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,5 +59,8 @@ public class DoctorProfile {
 
     @OneToMany(mappedBy = "doctor")
     List<ConsultationService> consultationServices;
+
+    @OneToMany(mappedBy = "doctor")
+List<DoctorSchedule> schedules;
 
 }

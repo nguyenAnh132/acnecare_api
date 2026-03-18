@@ -20,4 +20,6 @@ public interface UserMapper {
     UserResponse toUserCreationResponse(User user);
 
     List<UserResponse> toUserCreationResponses(List<User> users);
+
+    List<UserResponse> toUserResponseList(List<User> users);
 }
