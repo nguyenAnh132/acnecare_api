@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
-import java.util.List;
 import com.acnecare.api.permission.dto.response.PermissionResponse;
 import java.util.Set;
 

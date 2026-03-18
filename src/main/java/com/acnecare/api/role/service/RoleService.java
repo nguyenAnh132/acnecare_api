@@ -35,10 +35,12 @@ public class RoleService {
         return roleMapper.toRoleResponse(role);
     }
 
-    public RoleResponse getRole(String name) {
-        Role role = roleRepository.findById(name).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+    public RoleResponse getRole(String userId) {
+        Role role = roleRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         return roleMapper.toRoleResponse(role);
     }
+
+    
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<RoleResponse> getAllRoles() {

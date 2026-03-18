@@ -42,6 +42,13 @@ public enum ErrorCode {
     INVALID_WEBSITE(3005, "Invalid website", HttpStatus.BAD_REQUEST),
     INVALID_LOGO_URL(3006, "Invalid logo URL", HttpStatus.BAD_REQUEST),
 
+    // Post error codes
+    POST_NOT_FOUND(3007, "Post not found", HttpStatus.NOT_FOUND),
+    // VALIDATION POST ERRORS
+    INVALID_POST_TITLE(3008, "Invalid post title", HttpStatus.BAD_REQUEST),
+    INVALID_POST_CONTENT(3009, "Invalid post content", HttpStatus.BAD_REQUEST),
+    INVALID_POST_STATUS(3010, "Invalid post status", HttpStatus.BAD_REQUEST),
+
     // Doctor profile error codes
     DOCTOR_PROFILE_NOT_FOUND(3011, "Doctor profile not found", HttpStatus.NOT_FOUND),
     DOCTOR_ALREADY_HAS_PROFILE(3012, "Doctor already has a profile", HttpStatus.BAD_REQUEST),
