@@ -83,6 +83,7 @@ public enum ErrorCode {
     INVALID_PRODUCT_URL(2012, "Invalid product URL", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_ID(2013, "Invalid category ID", HttpStatus.BAD_REQUEST),
 
+   
     // APPOINTMENT ERRORS
     APPOINTMENT_NOT_FOUND(4000, "Appointment not found", HttpStatus.NOT_FOUND),
     APPOINTMENT_TIME_UNAVAILABLE(4001, "Doctor is unavailable at the selected time", HttpStatus.BAD_REQUEST),
@@ -93,8 +94,16 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST),
     APPOINTMENT_NOT_COMPLETED(4006, "Only completed appointments can be reviewed", HttpStatus.BAD_REQUEST),
     APPOINTMENT_ALREADY_REVIEWED(4007, "This appointment has already been reviewed", HttpStatus.BAD_REQUEST),
-    APPOINTMENT_CANNOT_BE_CANCELLED(4008, "This appointment cannot be cancelled", HttpStatus.BAD_REQUEST);
+    APPOINTMENT_CANNOT_BE_CANCELLED(4008, "This appointment cannot be cancelled", HttpStatus.BAD_REQUEST),
+    
+    CONSULTATION_SERVICE_NOT_FOUND(5401, "Consultation service not found", HttpStatus.NOT_FOUND),
+    INVALID_SERVICE_MODE(5402, "Invalid consultation service mode", HttpStatus.BAD_REQUEST),
+    DOCTOR_SCHEDULE_NOT_FOUND(5501, "Doctor schedule not found", HttpStatus.NOT_FOUND),
+    DOCTOR_SCHEDULE_TIME_CONFLICT(5502, "Doctor schedule time conflict", HttpStatus.BAD_REQUEST),
+    INVALID_DOCTOR_SCHEDULE_TIME(5503, "Invalid doctor schedule time", HttpStatus.BAD_REQUEST)
+    ;
 
+    
     int code;
     String message;
     HttpStatusCode statusCode;
