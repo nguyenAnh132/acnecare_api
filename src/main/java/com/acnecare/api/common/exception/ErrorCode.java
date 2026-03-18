@@ -72,7 +72,6 @@ public enum ErrorCode {
     ADMIN_PROFILE_ALREADY_EXISTS(3008, "Admin profile already exists", HttpStatus.BAD_REQUEST),
     ADMIN_PROFILE_NOT_FOUND(3009, "Admin profile not found", HttpStatus.NOT_FOUND),
 
-
     PRODUCT_NOT_FOUND(2005, "Product not found", HttpStatus.NOT_FOUND),
     PRODUCT_ALREADY_EXISTS(2006, "Product name already exists", HttpStatus.BAD_REQUEST),
     INVALID_PRODUCT_DATA(2007, "Invalid product data", HttpStatus.BAD_REQUEST),
@@ -83,7 +82,18 @@ public enum ErrorCode {
     INVALID_PRODUCT_DESCRIPTION(2011, "Invalid product description", HttpStatus.BAD_REQUEST),
     INVALID_PRODUCT_URL(2012, "Invalid product URL", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_ID(2013, "Invalid category ID", HttpStatus.BAD_REQUEST),
-    ;
+
+    // APPOINTMENT ERRORS
+    APPOINTMENT_NOT_FOUND(4000, "Appointment not found", HttpStatus.NOT_FOUND),
+    APPOINTMENT_TIME_UNAVAILABLE(4001, "Doctor is unavailable at the selected time", HttpStatus.BAD_REQUEST),
+    USER_IS_NOT_DOCTOR(4002, "Selected user is not a doctor", HttpStatus.BAD_REQUEST),
+    ERROR_INVALID_MODE(4003, "Invalid appointment mode. Allowed values are ONLINE or OFFLINE.", HttpStatus.BAD_REQUEST),
+    ERROR_INVALID_STATUS(4004, "Invalid appointment status", HttpStatus.BAD_REQUEST),
+    APPOINTMENT_CANNOT_CANCEL(4005, "Only appointments with status 'PENDING' or 'CONFIRMED' can be canceled",
+            HttpStatus.BAD_REQUEST),
+    APPOINTMENT_NOT_COMPLETED(4006, "Only completed appointments can be reviewed", HttpStatus.BAD_REQUEST),
+    APPOINTMENT_ALREADY_REVIEWED(4007, "This appointment has already been reviewed", HttpStatus.BAD_REQUEST),
+    APPOINTMENT_CANNOT_BE_CANCELLED(4008, "This appointment cannot be cancelled", HttpStatus.BAD_REQUEST);
 
     int code;
     String message;

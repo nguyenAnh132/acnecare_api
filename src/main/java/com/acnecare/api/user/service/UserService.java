@@ -28,7 +28,6 @@ import com.acnecare.api.doctor.service.DoctorService;
 import com.acnecare.api.brand.service.BrandService;
 import com.acnecare.api.admin.service.AdminService;
 
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -42,7 +41,6 @@ public class UserService {
     DoctorService doctorService;
     BrandService brandService;
     AdminService adminService;
-    
 
     // #region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
@@ -54,7 +52,7 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
         user.setLastLoginAt(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-      
+
         var role = getRolesFromRequest(request.getRoles());
         user.setRoles(role);
         if (request.getRoles().contains("PATIENT") || request.getRoles().contains("ADMIN")) {
@@ -65,7 +63,7 @@ public class UserService {
         userRepository.save(user);
 
         if (request.getRoles().contains("PATIENT")) {
-                patientService.createMyPatientProfile(user);
+            patientService.createMyPatientProfile(user);
         } else if (request.getRoles().contains("ADMIN")) {
             adminService.createMyAdminProfile(user);
         } else if (request.getRoles().contains("DOCTOR")) {
@@ -78,7 +76,7 @@ public class UserService {
     }
     // #endregion
 
-    private Set<Role> getRolesFromRequest(Set<String> roles) { // USER ADMIN
+    private Set<Role> getRolesFromRequest(Set<String> roles) {
         if (roles != null && !roles.isEmpty()) {
             var validRoles = roleRepository.findAllById(roles);
             if (roles.size() != validRoles.size())
@@ -136,5 +134,20 @@ public class UserService {
         user.setRoles(getRolesFromRequest(request.getRoles()));
 
         return userMapper.toUserCreationResponse(userRepository.save(user));
+    }
+
+    public List<UserResponse> getAllUsersByRole(String roleName) {
+        List<User> users = userRepository.findByRoles_Name(roleName);
+        return userMapper.toUserResponseList(users);
+    }
+
+    public List<UserResponse> getActiveUsersByRole(String roleName) {
+        List<User> users = userRepository.findByRoles_Name(roleName);
+
+        List<User> activeUsers = users.stream()
+                .filter(user -> "ACTIVE".equals(user.getStatus()))
+                .toList();
+
+        return userMapper.toUserResponseList(activeUsers);
     }
 }
