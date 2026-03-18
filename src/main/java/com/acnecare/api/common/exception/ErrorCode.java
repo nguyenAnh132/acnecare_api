@@ -83,8 +83,12 @@ public enum ErrorCode {
     INVALID_PRODUCT_DESCRIPTION(2011, "Invalid product description", HttpStatus.BAD_REQUEST),
     INVALID_PRODUCT_URL(2012, "Invalid product URL", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_ID(2013, "Invalid category ID", HttpStatus.BAD_REQUEST),
+
+    CONSULTATION_SERVICE_NOT_FOUND(5401, "Consultation service not found", HttpStatus.NOT_FOUND),
+    INVALID_SERVICE_MODE(5402, "Invalid consultation service mode", HttpStatus.BAD_REQUEST),
     ;
 
+    
     int code;
     String message;
     HttpStatusCode statusCode;
