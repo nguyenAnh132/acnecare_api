@@ -101,4 +101,64 @@ public class UserController {
                 .result(userService.changeUserStatus(id, status))
                 .build();
     }
+
+    @GetMapping("/doctors")
+    public ApiResponse<List<UserResponse>> getAllDoctors() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .message("Get all doctors successfully")
+                .result(userService.getAllUsersByRole("DOCTOR"))
+                .build();
+    }
+
+    @GetMapping("/doctors/active")
+    public ApiResponse<List<UserResponse>> getActiveDoctors() {
+        List<UserResponse> doctors = userService.getActiveUsersByRole("DOCTOR");
+        String message = doctors.isEmpty() ? "No active doctors found" : "Get active doctors successfully";
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .message(message)
+                .result(userService.getActiveUsersByRole("DOCTOR"))
+                .build();
+    }
+
+    @GetMapping("/patients")
+    public ApiResponse<List<UserResponse>> getAllPatients() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .message("Get all patients successfully")
+                .result(userService.getAllUsersByRole("PATIENT"))
+                .build();
+    }
+
+    @GetMapping("/patients/active")
+    public ApiResponse<List<UserResponse>> getActivePatients() {
+        List<UserResponse> patients = userService.getActiveUsersByRole("PATIENT");
+        String message = patients.isEmpty() ? "No active patients found" : "Get active patients successfully";
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .message(message)
+                .result(userService.getActiveUsersByRole("PATIENT"))
+                .build();
+    }
+
+    @GetMapping("/brands")
+    public ApiResponse<List<UserResponse>> getAllBrands() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .message("Get all brands successfully")
+                .result(userService.getAllUsersByRole("BRAND"))
+                .build();
+    }
+
+    @GetMapping("/brands/active")
+    public ApiResponse<List<UserResponse>> getActiveBrands() {
+        List<UserResponse> brands = userService.getActiveUsersByRole("BRAND");
+        String message = brands.isEmpty() ? "No active brands found" : "Get active brands successfully";
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(1000)
+                .message(message)
+                .result(userService.getActiveUsersByRole("BRAND"))
+                .build();
+    }
 }
