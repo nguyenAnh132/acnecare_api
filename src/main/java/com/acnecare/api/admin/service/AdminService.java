@@ -28,22 +28,24 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.acnecare.api.admin.repository.AdminProfileRepository;
 
-@Service
+import com.acnecare.api.admin.dto.request.AdminProfileUpdateRequest;
 
+@Service
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class AdminService {
 
-    private final UserRepository userRepository = null;
-    private final AdminProfileRepository adminProfileRepository = null;
-    private final AdminProfileMapper adminProfileMapper = null;
+    UserRepository userRepository;
+    AdminProfileRepository adminProfileRepository;
+    AdminProfileMapper adminProfileMapper;
 
     public void createMyAdminProfile(User user) {
 
         var userId = CurrentUserId.getCurrentUserId()
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        var isAlreadyExists = adminProfileRepository.existsById(userId);
+        var isAlreadyExists = adminProfileRepository.existsByUserId(userId);
 
         if (isAlreadyExists) {
             throw new AppException(ErrorCode.ADMIN_PROFILE_ALREADY_EXISTS);
@@ -52,6 +54,8 @@ public class AdminService {
         AdminProfile adminProfile = new AdminProfile();
 
         adminProfile.setUser(user);
+        adminProfile.setCreatedAt(LocalDateTime.now());
+        adminProfile.setUpdatedAt(LocalDateTime.now());
        
 
         adminProfileRepository.save(adminProfile);
@@ -85,23 +89,14 @@ public class AdminService {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public AdminProfileResponse updateMyAdminProfile() {
+    public AdminProfileResponse updateMyAdminProfile(AdminProfileUpdateRequest request) {
+        var userId = CurrentUserId.getCurrentUserId()
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var adminProfile = adminProfileRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.ADMIN_PROFILE_NOT_FOUND));
+        adminProfileMapper.updateAdminProfile(request, adminProfile);
+        adminProfile.setUpdatedAt(LocalDateTime.now());
+        return adminProfileMapper.toAdminProfileResponse(adminProfileRepository.save(adminProfile));
+    }
 
-        var userId = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        var alreadyExists = adminProfileRepository.findById(user.getId());
-
-        if (!alreadyExists.isPresent()) {
-            throw new AppException(ErrorCode.ADMIN_PROFILE_NOT_FOUND);
-        }
-
-        AdminProfile adminProfile = alreadyExists.get();
-
-        adminProfileRepository.save(adminProfile);
-
-        return getAdminProfileById(userId);
-}
 }

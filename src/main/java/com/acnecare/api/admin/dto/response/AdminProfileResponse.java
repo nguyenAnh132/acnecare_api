@@ -15,5 +15,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminProfileResponse {
     String department;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
     
 }

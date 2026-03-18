@@ -14,6 +14,11 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import lombok.AccessLevel;
 
+import com.acnecare.api.admin.dto.request.AdminProfileUpdateRequest;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/admins")
 @RequiredArgsConstructor
@@ -33,7 +38,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<AdminProfileResponse> getAdminProfileById(String id) {
+    ApiResponse<AdminProfileResponse> getAdminProfileById(@PathVariable String id) {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been retrieved successfully")
@@ -42,11 +47,11 @@ public class AdminController {
     }
 
     @PutMapping
-    ApiResponse<AdminProfileResponse> updateMyAdminProfile() {
+    ApiResponse<AdminProfileResponse> updateMyAdminProfile(@RequestBody @Valid AdminProfileUpdateRequest request) {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been updated successfully")
-                .result(adminService.updateMyAdminProfile())
+                .result(adminService.updateMyAdminProfile(request))
                 .build();
     }
 
