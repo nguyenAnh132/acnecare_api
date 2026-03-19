@@ -76,7 +76,7 @@ public class AdminController {
     }
 
     @PutMapping("/profile/me")
-    ApiResponse<AdminProfileResponse> updateMyAdminProfile() {
+    ApiResponse<AdminProfileResponse> updateMyAdminProfile(AdminProfileUpdateRequest request) {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been updated successfully")
