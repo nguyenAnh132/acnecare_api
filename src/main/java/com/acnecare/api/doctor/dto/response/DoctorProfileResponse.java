@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class DoctorProfileResponse {
     String userId;
     LocalDate dob;
-    String licenseNo;
+    String licenseUrl;
     String specialty;
     String bio;
     String clinicName;

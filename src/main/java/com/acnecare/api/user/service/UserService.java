@@ -78,7 +78,7 @@ public class UserService {
     }
     // #endregion
 
-    private Set<Role> getRolesFromRequest(Set<String> roles) { // USER ADMIN
+    private Set<Role> getRolesFromRequest(Set<String> roles) {
         if (roles != null && !roles.isEmpty()) {
             var validRoles = roleRepository.findAllById(roles);
             if (roles.size() != validRoles.size())
@@ -140,5 +140,20 @@ public class UserService {
         user.setRoles(getRolesFromRequest(request.getRoles()));
 
         return userMapper.toUserCreationResponse(userRepository.save(user));
+    }
+
+    public List<UserResponse> getAllUsersByRole(String roleName) {
+        List<User> users = userRepository.findByRoles_Name(roleName);
+        return userMapper.toUserResponseList(users);
+    }
+
+    public List<UserResponse> getActiveUsersByRole(String roleName) {
+        List<User> users = userRepository.findByRoles_Name(roleName);
+
+        List<User> activeUsers = users.stream()
+                .filter(user -> "ACTIVE".equals(user.getStatus()))
+                .toList();
+
+        return userMapper.toUserResponseList(activeUsers);
     }
 }

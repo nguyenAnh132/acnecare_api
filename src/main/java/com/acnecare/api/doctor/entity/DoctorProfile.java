@@ -1,15 +1,20 @@
 
 package com.acnecare.api.doctor.entity;
 
+import com.acnecare.api.consultation_service.entity.ConsultationService;
+import com.acnecare.api.doctorschedule.entity.DoctorSchedule;
 import com.acnecare.api.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +38,9 @@ public class DoctorProfile {
     String id;
 
     LocalDate dob;
-    String licenseNo;
+
+    @Column(name = "license_url", length = 255)
+    String licenseUrl;
     String specialty;
     String bio;
     String clinicName;
@@ -49,4 +56,11 @@ public class DoctorProfile {
     @MapsId
     @JoinColumn(name = "user_id")
     User user;
+
+    @OneToMany(mappedBy = "doctor")
+    List<ConsultationService> consultationServices;
+
+    @OneToMany(mappedBy = "doctor")
+List<DoctorSchedule> schedules;
+
 }
