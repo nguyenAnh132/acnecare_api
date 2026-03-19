@@ -1,4 +1,4 @@
-package com.acnecare.api.admin.dto.request;
+package com.acnecare.api.admin.dto.response;
 
 import lombok.Data;
 import lombok.Builder;
@@ -6,14 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
-import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AdminProfileUpdateRequest {
-    @Size(max = 255, message = "INVALID_DEPARTMENT")
-    String department;
+public class UserAdminResponse {
+    String id;
+    String username;
+    String email;
+    String role;
+    String status;
+    LocalDateTime createdAt;
 }

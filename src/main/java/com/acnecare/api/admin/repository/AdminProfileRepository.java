@@ -8,4 +8,5 @@ import com.acnecare.api.admin.entity.AdminProfile;
 @Repository
 public interface AdminProfileRepository extends JpaRepository<AdminProfile, String> {
 
+    boolean existsByUserId(String userId);
 }

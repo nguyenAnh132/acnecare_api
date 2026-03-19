@@ -17,9 +17,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.Builder;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-
+import java.time.LocalDateTime;
 @Entity
-@Table(name = "users")
+@Table(name = "admin_profiles")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,9 +28,10 @@ import jakarta.persistence.GenerationType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminProfile {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     String department;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 
     @OneToOne
     @MapsId

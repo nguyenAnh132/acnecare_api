@@ -26,6 +26,8 @@ public enum ErrorCode {
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     ACCESS_DENIED(1008, "Access denied", HttpStatus.FORBIDDEN),
     INVALID_KEY(1009, "Invalid key", HttpStatus.BAD_REQUEST),
+    INVALID_ROLE(1010, "Invalid role", HttpStatus.BAD_REQUEST),
+    INVALID_STATUS(1011, "Invalid status", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(1010, "Permission not found", HttpStatus.NOT_FOUND),
     USER_IS_BLOCKED(1019, "Your account has been blocked. Please contact Admin!", HttpStatus.FORBIDDEN),
 
@@ -48,7 +50,7 @@ public enum ErrorCode {
 
     // VALIDATION ERRORS
     // patient profile
-    INVALID_FIRST_NAME(1010, "Invalid first name", HttpStatus.BAD_REQUEST),
+    INVALID_FIRST_NAME(1100, "Invalid first name", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(1013, "Invalid email", HttpStatus.BAD_REQUEST),
     INVALID_LAST_NAME(1014, "Invalid last name", HttpStatus.BAD_REQUEST),
     INVALID_PHONE(1015, "Invalid phone", HttpStatus.BAD_REQUEST),
