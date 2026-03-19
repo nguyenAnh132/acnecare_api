@@ -27,4 +27,5 @@ public interface UserMapper {
     @Mapping(target = "username", source = "email")
     @Mapping(target = "role", expression = "java(user.getRoles().stream().map(role -> role.getName()).collect(java.util.stream.Collectors.joining(\", \")))")
     UserAdminResponse toUserAdminResponse(User user);
+    List<UserResponse> toUserResponseList(List<User> users);
 }

@@ -1,6 +1,8 @@
 package com.acnecare.api.patient.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -30,10 +32,9 @@ public class PatientService {
     PatientProfileRepository patientProfileRepository;
     PatientProfileMapper patientProfileMapper;
 
-
     public void createMyPatientProfile(User user) {
         var userId = CurrentUserId.getCurrentUserId()
-            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         var isAlreadyExists = patientProfileRepository.existsByUserId(userId);
         if (isAlreadyExists) {
@@ -47,24 +48,23 @@ public class PatientService {
         patientProfileRepository.save(patientProfile);
     }
 
-
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
     public PatientProfileResponse updateMyPatientProfile(PatientProfileUpdateRequest request) {
         var userId = CurrentUserId.getCurrentUserId()
-            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         var patientProfile = patientProfileRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
         patientProfileMapper.updatePatientProfile(request, patientProfile);
         patientProfile.setUpdatedAt(LocalDateTime.now());
         return patientProfileMapper.toPatientProfileResponse(patientProfileRepository.save(patientProfile));
     }
 
-
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
+    @Transactional(readOnly = true)
     public PatientProfileResponse getMyPatientProfile() {
         var userId = SecurityContextHolder.getContext().getAuthentication().getName();
         var user = userRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         var alreadyExists = patientProfileRepository.findById(user.getId());
         if (!alreadyExists.isPresent()) {
             throw new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND);
@@ -72,15 +72,13 @@ public class PatientService {
         return getPatientProfileById(userId);
     }
 
-
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
     public PatientProfileResponse getPatientProfileById(String id) {
         PatientProfile patientProfile = patientProfileRepository.findById(id)
-            .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.PATIENT_PROFILE_NOT_FOUND));
 
         return patientProfileMapper.toPatientProfileResponse(patientProfile);
     }
 
-
-    
 }

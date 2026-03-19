@@ -7,8 +7,6 @@ import lombok.AccessLevel;
 import java.util.Date;
 import com.acnecare.api.auth.repository.InvalidatedRepository;
 import lombok.extern.slf4j.Slf4j;
-import com.acnecare.api.auth.entity.InvalidatedToken;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,17 +19,10 @@ public class InvalidatedTokenService {
     public void cleanInvalidatedTokens() {
         var now = new Date();
         var invalidatedTokens = invalidatedRepository
-            .findAllByExpiryTimeBefore(now);
+                .findAllByExpiryTimeBefore(now);
 
-        if(!invalidatedTokens.isEmpty()) {
-            log.info("\nDeleted " + invalidatedRepository
-            .findAllByExpiryTimeBefore(now).stream()
-            .map(InvalidatedToken::getId)
-            .collect(Collectors.joining(", ")));
-
+        if (!invalidatedTokens.isEmpty()) {
             invalidatedRepository.deleteAll(invalidatedTokens);
-        } else {
-            log.info("No invalidated tokens to delete");
         }
     }
 

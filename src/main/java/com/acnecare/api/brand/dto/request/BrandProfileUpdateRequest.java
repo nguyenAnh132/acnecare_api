@@ -1,8 +1,8 @@
 package com.acnecare.api.brand.dto.request;
 
-import jakarta.validation.constraints.Email;
+import org.hibernate.validator.constraints.URL;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,15 +24,9 @@ public class BrandProfileUpdateRequest {
     @Size(max = 200, message = "INVALID_DESCRIPTION")
     String description;
 
-    @Size(max = 200, message = "INVALID_WEBSITE")
+    @URL(message = "INVALID_WEBSITE")
     String website;
 
-    @Size(max = 200, message = "INVALID_LOGO_URL")
+    @URL(message = "INVALID_LOGO_URL")
     String logoUrl;
-
-    @Email(message = "INVALID_EMAIL")
-    String email;
-
-    @Pattern(regexp = "^0[0-9]{9}$", message = "INVALID_PHONE")
-    String phone;
 }

@@ -1,5 +1,7 @@
 package com.acnecare.api.brand.dto.response;
 
+import java.time.LocalDateTime;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +21,6 @@ public class BrandProfileResponse{
     String logoUrl;
     String verificationStatus;
     String rejectionReason;
-    String email;
-    String phone;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

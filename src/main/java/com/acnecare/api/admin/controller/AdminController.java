@@ -57,7 +57,7 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("/profile/me")
     ApiResponse<AdminProfileResponse> getMyAdminProfile() {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
@@ -66,8 +66,8 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("/{id}")
-    ApiResponse<AdminProfileResponse> getAdminProfileById(@PathVariable String id) {
+    @GetMapping("/profile/{id}")
+    ApiResponse<AdminProfileResponse> getAdminProfileById(String id) {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been retrieved successfully")
@@ -75,8 +75,8 @@ public class AdminController {
                 .build();
     }
 
-    @PutMapping
-    ApiResponse<AdminProfileResponse> updateMyAdminProfile(@RequestBody @Valid AdminProfileUpdateRequest request) {
+    @PutMapping("/profile/me")
+    ApiResponse<AdminProfileResponse> updateMyAdminProfile() {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
                 .message("Admin Profile has been updated successfully")
