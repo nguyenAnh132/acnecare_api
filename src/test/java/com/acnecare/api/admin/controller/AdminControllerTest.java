@@ -12,9 +12,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.acnecare.api.admin.dto.response.UserAdminResponse;
 import com.acnecare.api.admin.service.AdminService;
+import org.mockito.Mock;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,7 +33,7 @@ public class AdminControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private AdminService adminService;
 
     private UserAdminResponse userAdminResponse;
@@ -44,7 +44,7 @@ public class AdminControllerTest {
                 .id("1")
                 .username("test@example.com")
                 .email("test@example.com")
-                .fullName("Test User")
+                .role("ADMIN")
                 .status("ACTIVE")
                 .build();
     }
@@ -54,7 +54,7 @@ public class AdminControllerTest {
     void getUsers_Success() throws Exception {
         Page<UserAdminResponse> userPage = new PageImpl<>(List.of(userAdminResponse));
 
-        when(adminService.getUsers(any(Pageable.class), any(), any(), any(), any(), any())).thenReturn(userPage);
+        when(adminService.getUsers(any(Pageable.class), any(), any(), any(), any(), any(), any(), any())).thenReturn(userPage);
 
         mockMvc.perform(get("/admins/users")
                 .param("page", "0")
