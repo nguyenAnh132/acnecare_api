@@ -35,27 +35,27 @@ public class AdminController {
 
     AdminService adminService;
 
-    @GetMapping("/users")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ApiResponse<Page<UserAdminResponse>> getUsers(
-            Pageable pageable,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) String role,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-            @RequestParam(required = false, defaultValue = "desc") String sortDir) {
+//     @GetMapping("/users")
+//     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//     public ApiResponse<Page<UserAdminResponse>> getUsers(
+//             Pageable pageable,
+//             @RequestParam(required = false) String search,
+//             @RequestParam(required = false) String role,
+//             @RequestParam(required = false) String status,
+//             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+//             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+//             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+//             @RequestParam(required = false, defaultValue = "desc") String sortDir) {
 
-        log.info("REST request to get users list for admin: page={}, size={}, search={}, role={}, status={}, startDate={}, endDate={}, sortBy={}, sortDir={}",
-                pageable.getPageNumber(), pageable.getPageSize(), search, role, status, startDate, endDate, sortBy, sortDir);
-        Page<UserAdminResponse> users = adminService.getUsers(pageable, search, role, status, startDate, endDate, sortBy, sortDir);
-        return ApiResponse.<Page<UserAdminResponse>>builder()
-                .code(1000)
-                .message("Users retrieved successfully")
-                .result(users)
-                .build();
-    }
+//         log.info("REST request to get users list for admin: page={}, size={}, search={}, role={}, status={}, startDate={}, endDate={}, sortBy={}, sortDir={}",
+//                 pageable.getPageNumber(), pageable.getPageSize(), search, role, status, startDate, endDate, sortBy, sortDir);
+//         Page<UserAdminResponse> users = adminService.getUsers(pageable, search, role, status, startDate, endDate, sortBy, sortDir);
+//         return ApiResponse.<Page<UserAdminResponse>>builder()
+//                 .code(1000)
+//                 .message("Users retrieved successfully")
+//                 .result(users)
+//                 .build();
+//     }
 
     @GetMapping("/profile/me")
     ApiResponse<AdminProfileResponse> getMyAdminProfile() {
