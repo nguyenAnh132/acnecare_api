@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
+import com.acnecare.api.acne.repository.AcneRepository;
+import com.acnecare.api.acne.entity.Acne;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,8 +29,23 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleReposity roleRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleReposity roleRepository, AcneRepository acneRepository) {
         return args -> {
+            if (acneRepository.count() == 0) {
+                List<Acne> acnes = List.of(
+                    Acne.builder()
+                        .name("Mụn đầu đen")
+                        .description("Acne description")
+                        .createdAt(LocalDateTime.now())
+                        .build(),
+                    Acne.builder()
+                        .name("Mụn ẩn")
+                        .description("Acne description")
+                        .createdAt(LocalDateTime.now())
+                        .build()
+                );
+                acneRepository.saveAll(acnes);
+            }
             if( !userRepository.existsByEmail("admin@gmail.com") 
                 && !roleRepository.existsByName("ADMIN") 
                 && !roleRepository.existsByName("PATIENT") 
