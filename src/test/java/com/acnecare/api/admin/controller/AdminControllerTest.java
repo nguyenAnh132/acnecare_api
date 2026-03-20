@@ -49,21 +49,21 @@ public class AdminControllerTest {
                 .build();
     }
 
-    @Test
-    @WithMockUser(authorities = "ROLE_ADMIN")
-    void getUsers_Success() throws Exception {
-        Page<UserAdminResponse> userPage = new PageImpl<>(List.of(userAdminResponse));
+    // @Test
+    // @WithMockUser(authorities = "ROLE_ADMIN")
+    // void getUsers_Success() throws Exception {
+    //     Page<UserAdminResponse> userPage = new PageImpl<>(List.of(userAdminResponse));
 
-        when(adminService.getUsers(any(Pageable.class), any(), any(), any(), any(), any(), any(), any())).thenReturn(userPage);
+    //     when(adminService.getUsers(any(Pageable.class), any(), any(), any(), any(), any(), any(), any())).thenReturn(userPage);
 
-        mockMvc.perform(get("/admins/users")
-                .param("page", "0")
-                .param("size", "10")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(1000))
-                .andExpect(jsonPath("$.result.content[0].email").value("test@example.com"));
-    }
+    //     mockMvc.perform(get("/admins/users")
+    //             .param("page", "0")
+    //             .param("size", "10")
+    //             .contentType(MediaType.APPLICATION_JSON))
+    //             .andExpect(status().isOk())
+    //             .andExpect(jsonPath("$.code").value(1000))
+    //             .andExpect(jsonPath("$.result.content[0].email").value("test@example.com"));
+    // }
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")

@@ -53,62 +53,62 @@ public class AdminService {
     AdminProfileMapper adminProfileMapper;
     UserMapper userMapper;
 
-    @Cacheable(cacheNames = "users", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #search + '-' + #role + '-' + #status + '-' + #startDate + '-' + #endDate + '-' + #sortBy + '-' + #sortDir")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public Page<UserAdminResponse> getUsers(
-            Pageable pageable, String search, String role, String status,
-            LocalDate startDate, LocalDate endDate,
-            String sortBy, String sortDir) {
+    // @Cacheable(cacheNames = "users", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #search + '-' + #role + '-' + #status + '-' + #startDate + '-' + #endDate + '-' + #sortBy + '-' + #sortDir")
+    // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    // public Page<UserAdminResponse> getUsers(
+    //         Pageable pageable, String search, String role, String status,
+    //         LocalDate startDate, LocalDate endDate,
+    //         String sortBy, String sortDir) {
 
-        String normalizedRole = normalizeRole(role);
-        String normalizedStatus = normalizeStatus(status);
-        Sort sort = buildSort(sortBy, sortDir);
-        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+    //     String normalizedRole = normalizeRole(role);
+    //     String normalizedStatus = normalizeStatus(status);
+    //     Sort sort = buildSort(sortBy, sortDir);
+    //     Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        log.info("Admin fetching user list with params: search={}, role={}, status={}, startDate={}, endDate={}, sortBy={}, sortDir={}",
-                search, normalizedRole, normalizedStatus, startDate, endDate, sortBy, sortDir);
+    //     log.info("Admin fetching user list with params: search={}, role={}, status={}, startDate={}, endDate={}, sortBy={}, sortDir={}",
+    //             search, normalizedRole, normalizedStatus, startDate, endDate, sortBy, sortDir);
 
-        Specification<User> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
+    //     Specification<User> spec = (root, query, criteriaBuilder) -> {
+    //         List<Predicate> predicates = new ArrayList<>();
 
-            if (search != null && !search.isBlank()) {
-                String pattern = "%" + search.toLowerCase() + "%";
-                Predicate searchPredicate = criteriaBuilder.or(
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), pattern),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), pattern),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), pattern)
-                );
-                predicates.add(searchPredicate);
-            }
+    //         if (search != null && !search.isBlank()) {
+    //             String pattern = "%" + search.toLowerCase() + "%";
+    //             Predicate searchPredicate = criteriaBuilder.or(
+    //                     criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), pattern),
+    //                     criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), pattern),
+    //                     criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), pattern)
+    //             );
+    //             predicates.add(searchPredicate);
+    //         }
 
-            if (normalizedRole != null) {
-                predicates.add(criteriaBuilder.equal(root.join("roles").get("name"), normalizedRole));
-            }
+    //         if (normalizedRole != null) {
+    //             predicates.add(criteriaBuilder.equal(root.join("roles").get("name"), normalizedRole));
+    //         }
 
-            if (normalizedStatus != null) {
-                predicates.add(criteriaBuilder.equal(root.get("status"), normalizedStatus));
-            }
+    //         if (normalizedStatus != null) {
+    //             predicates.add(criteriaBuilder.equal(root.get("status"), normalizedStatus));
+    //         }
 
-            if (startDate != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), startDate.atStartOfDay()));
-            }
+    //         if (startDate != null) {
+    //             predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), startDate.atStartOfDay()));
+    //         }
 
-            if (endDate != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), endDate.plusDays(1).atStartOfDay()));
-            }
+    //         if (endDate != null) {
+    //             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), endDate.plusDays(1).atStartOfDay()));
+    //         }
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+    //         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    //     };
 
-        try {
-            Page<User> userPage = userRepository.findAll(spec, sortedPageable);
-            log.info("Found {} users matching criteria", userPage.getTotalElements());
-            return userPage.map(userMapper::toUserAdminResponse);
-        } catch (Exception e) {
-            log.error("Error fetching user list: {}", e.getMessage());
-            throw new AppException(ErrorCode.UNCATEGORIZED_ERROR);
-        }
-    }
+    //     try {
+    //         Page<User> userPage = userRepository.findAll(spec, sortedPageable);
+    //         log.info("Found {} users matching criteria", userPage.getTotalElements());
+    //         return userPage.map(userMapper::toUserAdminResponse);
+    //     } catch (Exception e) {
+    //         log.error("Error fetching user list: {}", e.getMessage());
+    //         throw new AppException(ErrorCode.UNCATEGORIZED_ERROR);
+    //     }
+    // }
 
     private String normalizeRole(String role) {
         if (role == null || role.isBlank()) return null;
