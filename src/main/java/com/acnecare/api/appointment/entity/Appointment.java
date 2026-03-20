@@ -55,6 +55,13 @@ public class Appointment {
 
     @Column(name = "rating", columnDefinition = "INT")
     Integer rating;
+
+    @Column(name = "service_id", columnDefinition = "VARCHAR(255)")
+    String serviceId;
+
+    @Column(name = "service_name", columnDefinition = "VARCHAR(255)")
+    String serviceName;
+
     @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     LocalDateTime createdAt;
 }
