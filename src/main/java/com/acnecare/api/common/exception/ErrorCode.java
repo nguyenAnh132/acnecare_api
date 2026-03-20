@@ -48,11 +48,13 @@ public enum ErrorCode {
     DOCTOR_PROFILE_NOT_FOUND(3011, "Doctor profile not found", HttpStatus.NOT_FOUND),
     DOCTOR_ALREADY_HAS_PROFILE(3012, "Doctor already has a profile", HttpStatus.BAD_REQUEST),
 
+
     // Acne prediction error codes
     ACNE_PREDICTION_NOT_FOUND(6003, "Acne prediction not found", HttpStatus.NOT_FOUND),
 
     // Acne error codes
     ACNE_NOT_FOUND(7001, "Acne not found", HttpStatus.NOT_FOUND),
+
 
     
     // VALIDATION ERRORS
@@ -62,7 +64,6 @@ public enum ErrorCode {
 
 
     // acne
-
 
     // patient profile
     INVALID_FIRST_NAME(1100, "Invalid first name", HttpStatus.BAD_REQUEST),
