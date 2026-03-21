@@ -1,20 +1,9 @@
 package com.acnecare.api.acne.entity;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.AccessLevel;
 import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 @Entity
@@ -31,10 +20,13 @@ public class Acne {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(name = "name", nullable = false)
-    String name;
+    @Column(name = "code_name", unique = true, nullable = false)
+    String codeName; // Dùng để AI map dữ liệu (vd: "dark spot", "acne")
 
-    @Column(name = "description", nullable = true)
+    @Column(name = "name", nullable = false)
+    String name; // Tên tiếng Việt (vd: "Vết thâm")
+
+    @Column(name = "description")
     String description;
 
     @Column(name = "created_at", nullable = false)
