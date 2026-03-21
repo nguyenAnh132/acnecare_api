@@ -22,8 +22,3 @@ jwt:
 
 cors:
   allowed-origins: "http://localhost:5173"
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
