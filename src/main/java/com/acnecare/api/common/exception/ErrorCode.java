@@ -43,6 +43,12 @@ public enum ErrorCode {
     INVALID_DESCRIPTION(3004, "Invalid description", HttpStatus.BAD_REQUEST),
     INVALID_WEBSITE(3005, "Invalid website", HttpStatus.BAD_REQUEST),
     INVALID_LOGO_URL(3006, "Invalid logo URL", HttpStatus.BAD_REQUEST),
+    
+    //Post
+    POST_NOT_FOUND(3007, "Post not found", HttpStatus.NOT_FOUND),
+    //Like
+    LIKE_EXISTED(3010, "You have already liked this post", HttpStatus.BAD_REQUEST),
+    LIKE_NOT_FOUND(3011, "Like not found", HttpStatus.NOT_FOUND),
 
     // Doctor profile error codes
     DOCTOR_PROFILE_NOT_FOUND(3011, "Doctor profile not found", HttpStatus.NOT_FOUND),
