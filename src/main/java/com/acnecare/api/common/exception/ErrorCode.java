@@ -113,7 +113,16 @@ public enum ErrorCode {
     INVALID_SERVICE_MODE(5402, "Invalid consultation service mode", HttpStatus.BAD_REQUEST),
     DOCTOR_SCHEDULE_NOT_FOUND(5501, "Doctor schedule not found", HttpStatus.NOT_FOUND),
     DOCTOR_SCHEDULE_TIME_CONFLICT(5502, "Doctor schedule time conflict", HttpStatus.BAD_REQUEST),
-    INVALID_DOCTOR_SCHEDULE_TIME(5503, "Invalid doctor schedule time", HttpStatus.BAD_REQUEST);
+
+    INVALID_DOCTOR_SCHEDULE_TIME(5503, "Invalid doctor schedule time", HttpStatus.BAD_REQUEST),
+
+    // FILE UPLOAD ERRORS
+    FILE_EMPTY(6001, "File is empty", HttpStatus.BAD_REQUEST),
+    FILE_TOO_LARGE(6002, "File size exceeds the allowed limit", HttpStatus.BAD_REQUEST),
+    FILE_TYPE_NOT_ALLOWED(6003, "File type is not allowed", HttpStatus.BAD_REQUEST),
+    FILE_UPLOAD_FAILED(6004, "Failed to upload file", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_DELETE_FAILED(6005, "Failed to delete file", HttpStatus.INTERNAL_SERVER_ERROR)
+    ;
 
     int code;
     String message;

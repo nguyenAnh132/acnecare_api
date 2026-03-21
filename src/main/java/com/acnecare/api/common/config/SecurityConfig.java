@@ -48,6 +48,7 @@ public class SecurityConfig {
             "/categories/**",
             "/products",
             "/products/**",
+            "/files/**",
     };
 
     @Bean
