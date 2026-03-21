@@ -26,7 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class PatientService {
+public class PatientProfileService {
 
     UserRepository userRepository;
     PatientProfileRepository patientProfileRepository;

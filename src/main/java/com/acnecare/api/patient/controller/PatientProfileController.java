@@ -14,15 +14,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import lombok.extern.slf4j.Slf4j;
-import com.acnecare.api.patient.service.PatientService;
+import com.acnecare.api.patient.service.PatientProfileService;
 
 @RestController
 @RequestMapping("/patients")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class PatientController {
-    PatientService patientService;
+public class PatientProfileController {
+    PatientProfileService patientService;
 
     @PutMapping("/profile/me")
     ApiResponse<PatientProfileResponse> updatePatientProfile(@RequestBody @Valid PatientProfileUpdateRequest request) {
@@ -33,7 +33,6 @@ public class PatientController {
                 .build();
     }
 
-
     @GetMapping("/profile/me")
     ApiResponse<PatientProfileResponse> getMyPatientProfile() {
         return ApiResponse.<PatientProfileResponse>builder()
@@ -42,7 +41,6 @@ public class PatientController {
                 .result(patientService.getMyPatientProfile())
                 .build();
     }
-
 
     @GetMapping("/profile/{id}")
     ApiResponse<PatientProfileResponse> getPatientProfileById(@PathVariable String id) {

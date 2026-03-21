@@ -33,67 +33,66 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DoctorScheduleController {
 
-    DoctorScheduleService doctorScheduleService;
+        DoctorScheduleService doctorScheduleService;
 
-    @PostMapping
-    ApiResponse<DoctorScheduleResponse> createMySchedule(
-            @RequestBody @Valid DoctorScheduleCreationRequest request
-    ) {
-        return ApiResponse.<DoctorScheduleResponse>builder()
-                .code(1000)
-                .message("Doctor schedule has been created successfully")
-                .result(doctorScheduleService.createMySchedule(request))
-                .build();
-    }
+        @PostMapping
+        ApiResponse<DoctorScheduleResponse> createMySchedule(
+                        @RequestBody @Valid DoctorScheduleCreationRequest request) {
+                return ApiResponse.<DoctorScheduleResponse>builder()
+                                .code(1000)
+                                .message("Doctor schedule has been created successfully")
+                                .result(doctorScheduleService.createMySchedule(request))
+                                .build();
+        }
 
-    @GetMapping("/me")
-    ApiResponse<List<DoctorScheduleResponse>> getMySchedules() {
-        return ApiResponse.<List<DoctorScheduleResponse>>builder()
-                .code(1000)
-                .message("Doctor schedules have been retrieved successfully")
-                .result(doctorScheduleService.getMySchedules())
-                .build();
-    }
+        @GetMapping("/me")
+        ApiResponse<List<DoctorScheduleResponse>> getMySchedules() {
+                return ApiResponse.<List<DoctorScheduleResponse>>builder()
+                                .code(1000)
+                                .message("Doctor schedules have been retrieved successfully")
+                                .result(doctorScheduleService.getMySchedules())
+                                .build();
+        }
 
-    @GetMapping("/doctor/{doctorId}")
-    ApiResponse<List<DoctorScheduleResponse>> getSchedulesByDoctorId(
-            @PathVariable String doctorId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
-    ) {
-        return ApiResponse.<List<DoctorScheduleResponse>>builder()
-                .code(1000)
-                .message("Doctor schedules have been retrieved successfully")
-                .result(doctorScheduleService.getSchedulesByDoctorId(doctorId, date))
-                .build();
-    }
+        @GetMapping("/doctor/{doctorId}")
+        ApiResponse<List<DoctorScheduleResponse>> getSchedulesByDoctorId(
+                        @PathVariable String doctorId,
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                        @RequestParam(required = false) String serviceId // THÊM DÒNG NÀY
+        ) {
+                return ApiResponse.<List<DoctorScheduleResponse>>builder()
+                                .code(1000)
+                                .message("Doctor schedules have been retrieved successfully")
+                                .result(doctorScheduleService.getSchedulesByDoctorId(doctorId, serviceId, date))
+                                .build();
+        }
 
-    @GetMapping("/{scheduleId}")
-    ApiResponse<DoctorScheduleResponse> getScheduleById(@PathVariable String scheduleId) {
-        return ApiResponse.<DoctorScheduleResponse>builder()
-                .code(1000)
-                .message("Doctor schedule has been retrieved successfully")
-                .result(doctorScheduleService.getScheduleById(scheduleId))
-                .build();
-    }
+        @GetMapping("/{scheduleId}")
+        ApiResponse<DoctorScheduleResponse> getScheduleById(@PathVariable String scheduleId) {
+                return ApiResponse.<DoctorScheduleResponse>builder()
+                                .code(1000)
+                                .message("Doctor schedule has been retrieved successfully")
+                                .result(doctorScheduleService.getScheduleById(scheduleId))
+                                .build();
+        }
 
-    @PutMapping("/{scheduleId}")
-    ApiResponse<DoctorScheduleResponse> updateMySchedule(
-            @PathVariable String scheduleId,
-            @RequestBody @Valid DoctorScheduleUpdateRequest request
-    ) {
-        return ApiResponse.<DoctorScheduleResponse>builder()
-                .code(1000)
-                .message("Doctor schedule has been updated successfully")
-                .result(doctorScheduleService.updateMySchedule(scheduleId, request))
-                .build();
-    }
+        @PutMapping("/{scheduleId}")
+        ApiResponse<DoctorScheduleResponse> updateMySchedule(
+                        @PathVariable String scheduleId,
+                        @RequestBody @Valid DoctorScheduleUpdateRequest request) {
+                return ApiResponse.<DoctorScheduleResponse>builder()
+                                .code(1000)
+                                .message("Doctor schedule has been updated successfully")
+                                .result(doctorScheduleService.updateMySchedule(scheduleId, request))
+                                .build();
+        }
 
-    @DeleteMapping("/{scheduleId}")
-    ApiResponse<Void> deleteMySchedule(@PathVariable String scheduleId) {
-        doctorScheduleService.deleteMySchedule(scheduleId);
-        return ApiResponse.<Void>builder()
-                .code(1000)
-                .message("Doctor schedule has been deleted successfully")
-                .build();
-    }
+        @DeleteMapping("/{scheduleId}")
+        ApiResponse<Void> deleteMySchedule(@PathVariable String scheduleId) {
+                doctorScheduleService.deleteMySchedule(scheduleId);
+                return ApiResponse.<Void>builder()
+                                .code(1000)
+                                .message("Doctor schedule has been deleted successfully")
+                                .build();
+        }
 }

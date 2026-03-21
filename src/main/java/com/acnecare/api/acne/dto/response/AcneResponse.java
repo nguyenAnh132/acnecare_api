@@ -1,4 +1,4 @@
-package com.acnecare.api.admin.dto.response;
+package com.acnecare.api.acne.dto.response;
 
 import lombok.Data;
 import lombok.Builder;
@@ -7,18 +7,17 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import java.time.LocalDateTime;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonFilter;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserAdminResponse {
+@JsonFilter("snakeCaseFilter")
+public class AcneResponse {
     String id;
-    String username;
-    String email;
-    String role;
-    String status;
+    String name;
+    String description;
     LocalDateTime createdAt;
 }

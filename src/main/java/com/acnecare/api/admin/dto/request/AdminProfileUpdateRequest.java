@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
-import jakarta.validation.constraints.Size;
 
 @Data
 @Builder
@@ -14,6 +13,5 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminProfileUpdateRequest {
-    @Size(max = 255, message = "INVALID_DEPARTMENT")
     String department;
 }

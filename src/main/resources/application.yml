@@ -9,7 +9,7 @@ spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/acnecare"
     username: root
-    password: 123456
+    password: root
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,8 +22,3 @@ jwt:
 
 cors:
   allowed-origins: "http://localhost:5173"
-
-  data:
-    redis:
-      host: localhost
-      port: 6379

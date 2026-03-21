@@ -12,6 +12,7 @@ import com.acnecare.api.appointment.mapper.AppointmentMapper;
 import com.acnecare.api.appointment.repository.AppointmentRepository;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
+import com.acnecare.api.consultation_service.repository.ConsultationServiceRepository;
 import com.acnecare.api.user.entity.User;
 import com.acnecare.api.user.repository.UserRepository;
 import lombok.AccessLevel;
@@ -41,6 +42,7 @@ public class AppointmentService {
     UserRepository userRepository;
     AppointmentMapper appointmentMapper;
     SimpMessagingTemplate messagingTemplate;
+    ConsultationServiceRepository consultationServiceRepository;
 
     @PreAuthorize("hasAuthority('ROLE_PATIENT')")
     public AppointmentResponse createAppointment(AppointmentCreationRequest request) {
@@ -76,7 +78,13 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.PENDING.name());
         appointment.setPaymentStatus("UNPAID");
         appointment.setCreatedAt(LocalDateTime.now());
+        var consultationService = consultationServiceRepository
+                .findByIdAndDoctorId(request.getServiceId(), doctor.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CONSULTATION_SERVICE_NOT_FOUND));
 
+        // 2. Gán thông tin dịch vụ vào lịch khám
+        appointment.setServiceId(consultationService.getId());
+        appointment.setServiceName(consultationService.getServiceName());
         appointment = appointmentRepository.save(appointment);
 
         WsMessageResponse doctorMsg = WsMessageResponse.builder()
