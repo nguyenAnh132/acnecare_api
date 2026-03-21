@@ -60,6 +60,8 @@ public enum ErrorCode {
     INVALID_NOTE(6002, "Invalid note", HttpStatus.BAD_REQUEST),
 
     // acne
+    PATIENT_ID_REQUIRED(7001, "Patient ID is required for doctors when saving face scan results",
+            HttpStatus.BAD_REQUEST),
 
     // patient profile
     INVALID_FIRST_NAME(1100, "Invalid first name", HttpStatus.BAD_REQUEST),
