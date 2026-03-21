@@ -35,12 +35,10 @@ public class Likes {
     LocalDateTime createAt;
 
     @ManyToOne
-    @MapsId
     @JoinColumn(name = "postId", referencedColumnName = "id")
     Posts posts;
 
     @ManyToOne
-    @MapsId
     @JoinColumn(name = "userId", referencedColumnName = "id" )
     User user;
 }

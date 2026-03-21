@@ -28,7 +28,7 @@ public class LikesService {
     PostsRepository postsRepository;
     UserRepository userRepository;
 
-    public void toggleLike(String postId){
+    public boolean toggleLike(String postId){
 
         var userId = CurrentUserId.getCurrentUserId()
             .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
@@ -41,7 +41,10 @@ public class LikesService {
         boolean alreadyLiked = likesRepository.existsByPostsIdAndUserId(postId, userId);
 
         if (alreadyLiked) {
-            throw new AppException(ErrorCode.LIKE_EXISTED);
+            Likes like = likesRepository.findByPostsIdAndUserId(postId, userId)
+            .orElseThrow(() -> new AppException(ErrorCode.LIKE_NOT_FOUND));
+            likesRepository.delete(like);
+            return false;
         }
 
         Likes like = Likes.builder()
@@ -50,6 +53,7 @@ public class LikesService {
             .posts(post)
             .build();
         likesRepository.save(like);
+        return true;
     }
 
     // public void deleteLikePost(String postId){

@@ -1,6 +1,5 @@
 package com.acnecare.api.post.controller;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +22,11 @@ public class LikeController {
     LikesService likesService;
     @PostMapping
     public ApiResponse<Void> likePost(@PathVariable String postId){
-        likesService.toggleLike(postId);
-
+        boolean liked = likesService.toggleLike(postId);
+        String responseMessage = liked ? "Post liked successfully" : "Post unliked successfully";
         return ApiResponse.<Void> builder()
             .code(1000)
-            .message("Liked the post")
+            .message(responseMessage)
             .build();
     }
 }
