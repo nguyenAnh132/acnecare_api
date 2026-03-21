@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.acnecare.api.admin.dto.response.UserAdminResponse;
+import com.acnecare.api.admin.dto.response.AdminProfileResponse;
 import com.acnecare.api.admin.service.AdminService;
 import org.mockito.Mock;
 
@@ -36,18 +36,7 @@ public class AdminControllerTest {
     @Mock
     private AdminService adminService;
 
-    private UserAdminResponse userAdminResponse;
-
-    @BeforeEach
-    void setUp() {
-        userAdminResponse = UserAdminResponse.builder()
-                .id("1")
-                .username("test@example.com")
-                .email("test@example.com")
-                .role("ADMIN")
-                .status("ACTIVE")
-                .build();
-    }
+    private AdminProfileResponse adminProfileResponse;
 
     // @Test
     // @WithMockUser(authorities = "ROLE_ADMIN")

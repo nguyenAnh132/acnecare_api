@@ -22,8 +22,8 @@ import com.acnecare.api.common.exception.ErrorCode;
 import com.acnecare.api.user.entity.User;
 import com.acnecare.api.user.mapper.UserMapper;
 import com.acnecare.api.user.repository.UserRepository;
-import com.acnecare.api.admin.repository.AdminProfileRepository;
-import com.acnecare.api.admin.mapper.AdminProfileMapper;
+import com.acnecare.api.admin.repository.AdminRepository;
+import com.acnecare.api.admin.mapper.AdminMapper;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -32,10 +32,10 @@ class AdminServiceTest {
     UserRepository userRepository;
 
     @Mock
-    AdminProfileRepository adminProfileRepository;
+    AdminRepository adminRepository;
 
     @Mock
-    AdminProfileMapper adminProfileMapper;
+    AdminMapper adminMapper;
 
     @Mock
     UserMapper userMapper;
