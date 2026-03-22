@@ -22,6 +22,7 @@ import com.acnecare.api.role.dto.response.RoleResponse;
 @Builder
 public class UserPostsResponse {
     Set<RoleResponse> role;
+    String id;
     String name;
     String avatarUrl;
 }

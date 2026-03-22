@@ -95,6 +95,7 @@ public class PostsService {
                     User user = post.getUser();
                     if (user != null) {
                         response.setUser(UserPostsResponse.builder()
+                                .id(user.getId())
                                 .role(postsMapper.toRoleResponseSet(user.getRoles()))
                                 .name(user.getFirstName() + " " + user.getLastName())
                                 .avatarUrl(user.getAvatarUrl())
@@ -122,6 +123,7 @@ public class PostsService {
                     User user = post.getUser();
                     if (user != null) {
                         response.setUser(UserPostsResponse.builder()
+                                .id(user.getId())
                                 .role(postsMapper.toRoleResponseSet(user.getRoles()))
                                 .name(user.getFirstName() + " " + user.getLastName())
                                 .avatarUrl(user.getAvatarUrl())
@@ -142,6 +144,7 @@ public class PostsService {
         User user = post.getUser();
         if (user != null) {
             response.setUser(UserPostsResponse.builder()
+                    .id(user.getId())
                     .role(postsMapper.toRoleResponseSet(user.getRoles()))
                     .name(user.getFirstName() + " " + user.getLastName())
                     .avatarUrl(user.getAvatarUrl())
@@ -190,7 +193,7 @@ public class PostsService {
         return postsMapper.toPostsResponse(postsRepository.save(posts));
     }
     // Xóa bài viết
-    @PostAuthorize("returnObject.user.name == authentication.name")
+    // @PostAuthorize("returnObject.user.name == authentication.name")
     public void deletePost(String userId, String postId) {
         Posts posts = postsRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
         if (userId != null && !posts.getUser().getId().equals(userId)) {

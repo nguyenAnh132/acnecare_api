@@ -2,8 +2,6 @@ package com.acnecare.api.post.dto.Response;
 
 import java.time.LocalDateTime;
 
-import com.acnecare.api.user.dto.response.UserResponse;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +14,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentResponse {
     String id;
+    String firstName;
+    String lastName;
+    String avatarUrl;
     String commentContent;
     LocalDateTime createAt;
 }
