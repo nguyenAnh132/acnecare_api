@@ -10,15 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import com.acnecare.api.common.helper.CurrentUserId;
+import com.acnecare.api.post.Repository.CommentRepository;
 import com.acnecare.api.post.Repository.LikesRepository;
 import com.acnecare.api.post.Repository.PostsImagesRepository;
 import com.acnecare.api.post.Repository.PostsRepository;
 import com.acnecare.api.post.dto.Request.PostsRequest;
+import com.acnecare.api.post.dto.Response.CommentResponse;
 import com.acnecare.api.post.dto.Response.PostsImageResponse;
 import com.acnecare.api.post.dto.Response.PostsResponse;
 import com.acnecare.api.post.dto.Response.UserPostsResponse;
+import com.acnecare.api.post.entity.Comment;
 import com.acnecare.api.post.entity.Posts;
 import com.acnecare.api.post.entity.PostsImages;
+import com.acnecare.api.post.mapper.CommentMapper;
 import com.acnecare.api.post.mapper.PostsImagesMapper;
 import com.acnecare.api.post.mapper.PostsMapper;
 import com.acnecare.api.user.entity.User;
@@ -41,6 +45,8 @@ public class PostsService {
     PostsMapper postsMapper;
     PostsImagesMapper postsImagesMapper;
     LikesRepository likesRepository;
+    CommentRepository commentRepository;
+    CommentMapper commentMapper;
 
     // Lấy ảnh bài viết
     private List<PostsImageResponse> getPostImages(String postId) {
@@ -66,6 +72,18 @@ public class PostsService {
             response.setLiked(false);
         }
     }
+
+    //
+    private void enrichPostWithCommentInfo(PostsResponse response, String postId){
+        List<Comment> comments = commentRepository.findByPostsIdOrderByCreateAtDesc(postId);
+        
+        List<CommentResponse> commentResponses = comments.stream()
+                .map(commentMapper::toCommentResponse)
+                .toList();
+                
+        response.setComments(commentResponses);
+        response.setCommentsCount(commentResponses.size());
+    }
     
     // Lấy tất cả bài viết
     @Transactional(readOnly = true)
@@ -84,6 +102,7 @@ public class PostsService {
                     }
                     response.setPostsImage(getPostImages(post.getId()));
                     enrichPostWithLikeInfo(response, post.getId());
+                    enrichPostWithCommentInfo(response, post.getId());
                     return response;
                 })
                 .toList();
@@ -110,6 +129,7 @@ public class PostsService {
                     }
                     response.setPostsImage(getPostImages(post.getId()));
                     enrichPostWithLikeInfo(response, post.getId());
+                    enrichPostWithCommentInfo(response, post.getId());
                     return response;
 
                 }).toList();
@@ -127,8 +147,10 @@ public class PostsService {
                     .avatarUrl(user.getAvatarUrl())
                     .build());
         }
+        // Có thể thay postId vào post.getId() không nhỉ ?????
         response.setPostsImage(getPostImages(post.getId()));
         enrichPostWithLikeInfo(response, post.getId());
+        enrichPostWithCommentInfo(response, post.getId());
         return response;
     }
     // Tạo bài viết mới

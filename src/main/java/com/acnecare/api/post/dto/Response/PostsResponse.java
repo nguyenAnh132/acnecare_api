@@ -27,4 +27,6 @@ public class PostsResponse {
 
     long likesCount;
     boolean isLiked;
+    long commentsCount;
+    List<CommentResponse> comments;
 }
