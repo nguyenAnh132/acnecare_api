@@ -115,7 +115,18 @@ public enum ErrorCode {
     INVALID_SERVICE_MODE(5402, "Invalid consultation service mode", HttpStatus.BAD_REQUEST),
     DOCTOR_SCHEDULE_NOT_FOUND(5501, "Doctor schedule not found", HttpStatus.NOT_FOUND),
     DOCTOR_SCHEDULE_TIME_CONFLICT(5502, "Doctor schedule time conflict", HttpStatus.BAD_REQUEST),
-    INVALID_DOCTOR_SCHEDULE_TIME(5503, "Invalid doctor schedule time", HttpStatus.BAD_REQUEST);
+    INVALID_DOCTOR_SCHEDULE_TIME(5503, "Invalid doctor schedule time", HttpStatus.BAD_REQUEST),
+    
+    
+        // TREATMENT CASE ERRORS
+        TREATMENT_CASE_NOT_FOUND(8001, "Treatment case not found", HttpStatus.NOT_FOUND),
+
+        // CONSULTATION ERRORS
+        CONSULTATION_NOT_FOUND(8101, "Consultation not found", HttpStatus.NOT_FOUND),
+        APPOINTMENT_NOT_COMPLETED_FOR_CONSULTATION(8102, "Appointment must be COMPLETED to create consultation", HttpStatus.BAD_REQUEST),
+        CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(8103, "A consultation already exists for this appointment", HttpStatus.BAD_REQUEST)
+
+    ;
 
     int code;
     String message;
