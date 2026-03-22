@@ -173,7 +173,7 @@ public class PostsService {
     }
     // Cập nhật bài viết
     // Thêm để kiểm tra AccessDenied nếu userId không khớp với userId của bài viết, hoặc có thể kiểm tra trong controller bằng cách lấy userId từ token và so sánh với userId trong request body
-    @PostAuthorize("returnObject.user.name == authentication.name")
+    // @PostAuthorize("returnObject.user.name == authentication.name")
     public PostsResponse updatePost(String userId, String postId, PostsRequest request) {
         var isValidUser = userRepository.existsById(userId);
         if (!isValidUser) {

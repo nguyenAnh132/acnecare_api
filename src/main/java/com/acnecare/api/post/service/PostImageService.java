@@ -83,5 +83,21 @@ public class PostImageService {
                 .build();
                 
         postsImagesRepository.save(postImage);
-    }    
+    }
+    
+    public void deletePostImage(String imageId) {
+        var userId = CurrentUserId.getCurrentUserId()
+            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        PostsImages image = postsImagesRepository.findById(imageId)
+            .orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND)); 
+
+        if (!image.getPosts().getUser().getId().equals(userId)) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+
+        fileStorageService.delete(image.getImageUrl());
+
+        postsImagesRepository.delete(image);
+    }
 }

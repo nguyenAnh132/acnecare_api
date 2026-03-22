@@ -2,6 +2,7 @@ package com.acnecare.api.post.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,16 @@ public class PostsImageController {
                 .code(1000)
                 .message("List of successfully retrieved images")
                 .result(postImageService.getImagesByPostId(postId))
+                .build();
+    }
+
+    @DeleteMapping("/{imageId}")
+    public ApiResponse<Void> deletePostImage(@PathVariable("postId") String postId, @PathVariable String imageId) {
+        postImageService.deletePostImage(imageId);
+        
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Image has been deleted successfully")
                 .build();
     }
 }

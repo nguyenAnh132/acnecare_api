@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostsImageResponse {
+    String id;
     String imageUrl;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
