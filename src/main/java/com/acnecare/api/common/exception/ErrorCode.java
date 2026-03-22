@@ -118,14 +118,21 @@ public enum ErrorCode {
     INVALID_DOCTOR_SCHEDULE_TIME(5503, "Invalid doctor schedule time", HttpStatus.BAD_REQUEST),
     
     
-        // TREATMENT CASE ERRORS
-        TREATMENT_CASE_NOT_FOUND(8001, "Treatment case not found", HttpStatus.NOT_FOUND),
+    // TREATMENT CASE ERRORS
+    TREATMENT_CASE_NOT_FOUND(8001, "Treatment case not found", HttpStatus.NOT_FOUND),
 
-        // CONSULTATION ERRORS
-        CONSULTATION_NOT_FOUND(8101, "Consultation not found", HttpStatus.NOT_FOUND),
-        APPOINTMENT_NOT_COMPLETED_FOR_CONSULTATION(8102, "Appointment must be COMPLETED to create consultation", HttpStatus.BAD_REQUEST),
-        CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(8103, "A consultation already exists for this appointment", HttpStatus.BAD_REQUEST)
+    // CONSULTATION ERRORS
+    CONSULTATION_NOT_FOUND(8101, "Consultation not found", HttpStatus.NOT_FOUND),
+    APPOINTMENT_NOT_COMPLETED_FOR_CONSULTATION(8102, "Appointment must be COMPLETED to create consultation", HttpStatus.BAD_REQUEST),
+    CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(8103, "A consultation already exists for this appointment", HttpStatus.BAD_REQUEST),
 
+     // FILE UPLOAD ERRORS
+    FILE_EMPTY(6001, "File is empty", HttpStatus.BAD_REQUEST),
+    FILE_TOO_LARGE(6002, "File size exceeds the allowed limit", HttpStatus.BAD_REQUEST),
+    FILE_TYPE_NOT_ALLOWED(6003, "File type is not allowed", HttpStatus.BAD_REQUEST),
+    FILE_UPLOAD_FAILED(6004, "Failed to upload file", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_DELETE_FAILED(6005, "Failed to delete file", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_STORAGE_FOLDER(6006, "Invalid storage folder", HttpStatus.BAD_REQUEST),
     ;
 
     int code;

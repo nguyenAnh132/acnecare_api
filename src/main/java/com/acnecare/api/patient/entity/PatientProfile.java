@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
 import com.acnecare.api.user.entity.User;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.persistence.MapsId;
 @Entity
@@ -28,7 +27,7 @@ public class PatientProfile {
 
     @Id
     String id;
-    boolean gender; //true: male, false: female
+    boolean gender;
     String skinType;
     String allergies;
     double height;
