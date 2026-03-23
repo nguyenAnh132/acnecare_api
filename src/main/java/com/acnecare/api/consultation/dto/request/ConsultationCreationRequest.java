@@ -1,5 +1,7 @@
 package com.acnecare.api.consultation.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -7,9 +9,19 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ConsultationCreationRequest {
 
-    String appointmentId;   // bắt buộc — lấy từ lịch khám
-    String assessment;      // đánh giá tình trạng da
-    String planSummary;     // kế hoạch điều trị
-    String doctorNotes;     // ghi chú thêm
-    String chiefComplaint;  // lý do khám (chỉ dùng khi tạo TreatmentCase mới)
+    @NotBlank(message = "Appointment ID is required")
+    String appointmentId;
+
+    @NotBlank(message = "Assessment is required")
+    @Size(max = 2000, message = "Assessment must not exceed 2000 characters")
+    String assessment;
+
+    @Size(max = 2000, message = "Plan summary must not exceed 2000 characters")
+    String planSummary;
+
+    @Size(max = 1000, message = "Doctor notes must not exceed 1000 characters")
+    String doctorNotes;
+
+    @Size(max = 500, message = "Chief complaint must not exceed 500 characters")
+    String chiefComplaint;
 }

@@ -32,7 +32,7 @@ public class ConsultationController {
     ) {
         return ApiResponse.<ConsultationResponse>builder()
             .code(1000)
-            .message("Lấy lịch sử khám thành công")
+            .message("Consultation created successfully")
             .result(consultationService.createConsultation(request))
             .build();
     }
@@ -44,7 +44,7 @@ public class ConsultationController {
     {
         return ApiResponse.<List<ConsultationResponse>>builder()
             .code(1000)
-            .message("Lấy lịch sử khám thành công")
+            .message("Consultations retrieved successfully")
             .result(consultationService.getConsultationsByCase(caseId))
             .build();
     }
@@ -55,7 +55,7 @@ public class ConsultationController {
         {
             return ApiResponse.<ConsultationResponse>builder()
                 .code(1000)
-                .message("Lấy lịch sử khám thành công")
+                .message("Consultation retrieved successfully")
                 .result(consultationService.getConsultationById(id))
                 .build();
         }

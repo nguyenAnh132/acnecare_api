@@ -2,7 +2,8 @@ package com.acnecare.api.product.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.URL;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,17 +28,18 @@ public class ProductCreationRequest {
     @NotBlank(message = "INVALID_PRODUCT_DESCRIPTION")
     String description;
 
-    @URL(message = "INVALID_PRODUCT_URL")
-    String thumbnailUrl;
-
-    String imagesUrl;
-
     String ingredients;
 
-    @URL(message = "INVALID_PRODUCT_URL")
     String affiliateUrl;
 
     @NotBlank(message = "INVALID_CATEGORY_ID")
     String categoryId;
 
+    // --- CÁC TRƯỜNG DÀNH CHO FILE UPLOAD ---
+    MultipartFile thumbnailFile;
+    List<MultipartFile> imageFiles;
+
+    // Vẫn giữ trường String phòng trường hợp user truyền link ảnh từ nguồn ngoài
+    String thumbnailUrl;
+    String imagesUrl;
 }

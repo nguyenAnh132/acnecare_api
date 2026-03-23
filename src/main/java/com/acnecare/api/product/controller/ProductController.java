@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class ProductController {
     // Lúc nãy ở Service đã cấp quyền cho 3 Role, nên không cần gán lại ở Controller
     // nếu không muốn,
     // nhưng gán ở cả Service và Controller là an toàn nhất.
-    @PostMapping
-    ApiResponse<ProductResponse> createProduct(@Valid @RequestBody ProductCreationRequest request) {
+    @PostMapping(consumes = { "multipart/form-data" })
+    ApiResponse<ProductResponse> createProduct(@Valid @ModelAttribute ProductCreationRequest request) {
         return ApiResponse.<ProductResponse>builder()
                 .code(1000)
                 .message("Product created successfully")
@@ -34,9 +36,10 @@ public class ProductController {
                 .build();
     }
 
-    @PutMapping("/{id}")
-    ApiResponse<ProductResponse> updateProduct(@PathVariable String id,
-            @Valid @RequestBody ProductUpdateRequest request) {
+    @PutMapping(value = "/{id}", consumes = { "multipart/form-data" })
+    ApiResponse<ProductResponse> updateProduct(
+            @PathVariable String id,
+            @Valid @ModelAttribute ProductUpdateRequest request) {
         return ApiResponse.<ProductResponse>builder()
                 .code(1000)
                 .message("Product updated successfully")
@@ -59,6 +62,18 @@ public class ProductController {
                 .code(1000)
                 .message("Products retrieved successfully")
                 .result(productService.getAllProducts())
+                .build();
+    }
+
+    @PatchMapping("/{id}/approval-status")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ApiResponse<ProductResponse> updateApprovalStatus(
+            @PathVariable String id,
+            @RequestParam String status) {
+        return ApiResponse.<ProductResponse>builder()
+                .code(1000)
+                .message("Cập nhật trạng thái thành công")
+                .result(productService.updateApprovalStatus(id, status))
                 .build();
     }
 

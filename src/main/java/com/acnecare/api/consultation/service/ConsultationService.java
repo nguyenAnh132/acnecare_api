@@ -5,6 +5,7 @@ import com.acnecare.api.appointment.enums.AppointmentStatus;
 import com.acnecare.api.appointment.repository.AppointmentRepository;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
+import com.acnecare.api.common.helper.CurrentUserId;
 import com.acnecare.api.consultation.dto.request.ConsultationCreationRequest;
 import com.acnecare.api.consultation.dto.response.ConsultationResponse;
 import com.acnecare.api.consultation.entity.Consultation;
@@ -38,7 +39,7 @@ public class ConsultationService {
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     @Transactional
     public ConsultationResponse createConsultation(ConsultationCreationRequest request) {
-        String doctorId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String doctorId = CurrentUserId.getCurrentUserId().orElseThrow();
 
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
                 .orElseThrow(() -> new AppException(ErrorCode.APPOINTMENT_NOT_FOUND));
@@ -95,6 +96,18 @@ public class ConsultationService {
 
     @PreAuthorize("hasAnyAuthority('ROLE_DOCTOR', 'ROLE_PATIENT')")
     public List<ConsultationResponse> getConsultationsByCase(String caseId) {
+        String currentUserId = CurrentUserId.getCurrentUserId().orElseThrow();
+
+        TreatmentCase treatmentCase = treatmentCaseRepository.findById(caseId)
+                .orElseThrow(() -> new AppException(ErrorCode.TREATMENT_CASE_NOT_FOUND));
+
+        boolean isDoctor = treatmentCase.getDoctor().getId().equals(currentUserId);
+        boolean isPatient = treatmentCase.getPatient().getId().equals(currentUserId);
+
+        if (!isDoctor && !isPatient) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+
         return consultationMapper.toResponseList(
                 consultationRepository.findByTreatmentCaseIdOrderByConsultationAtDesc(caseId));
     }
