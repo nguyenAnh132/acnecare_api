@@ -1,5 +1,6 @@
 package com.acnecare.api.post.controller;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LikeController {
     LikesService likesService;
+    SimpMessagingTemplate messagingTemplate;
     @PostMapping
     public ApiResponse<Void> likePost(@PathVariable String postId){
         boolean liked = likesService.toggleLike(postId);
         String responseMessage = liked ? "Post liked successfully" : "Post unliked successfully";
+
+        messagingTemplate.convertAndSend("/topic/posts/" + postId + "/likes", liked);
+
         return ApiResponse.<Void> builder()
             .code(1000)
             .message(responseMessage)

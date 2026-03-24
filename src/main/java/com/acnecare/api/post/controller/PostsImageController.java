@@ -2,6 +2,7 @@ package com.acnecare.api.post.controller;
 
 import java.util.List;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,16 +26,21 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostsImageController {
     PostImageService postImageService;
+    SimpMessagingTemplate messagingTemplate;
 
     @PostMapping(consumes = "multipart/form-data")
     public ApiResponse<List<PostsImageResponse>> uploadPostImages(
             @PathVariable String postId,
             @RequestParam("files") List<MultipartFile> files) {
         
+        List<PostsImageResponse> uploadedImages = postImageService.uploadAndSavePostImages(postId, files);
+        
+        messagingTemplate.convertAndSend("/topic/posts/" + postId + "/images/upload", uploadedImages);
+
         return ApiResponse.<List<PostsImageResponse>>builder()
                 .code(1000)
                 .message("Upload image has been successfully")
-                .result(postImageService.uploadAndSavePostImages(postId, files))
+                .result(uploadedImages)
                 .build();
     }
 
@@ -49,7 +55,10 @@ public class PostsImageController {
 
     @DeleteMapping("/{imageId}")
     public ApiResponse<Void> deletePostImage(@PathVariable("postId") String postId, @PathVariable String imageId) {
+        
         postImageService.deletePostImage(imageId);
+        
+        messagingTemplate.convertAndSend("/topic/posts/" + postId + "/images/delete", imageId);
         
         return ApiResponse.<Void>builder()
                 .code(1000)

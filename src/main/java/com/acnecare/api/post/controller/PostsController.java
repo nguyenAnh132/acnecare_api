@@ -2,6 +2,7 @@ package com.acnecare.api.post.controller;
 
 import java.util.List;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PostsController {
     
     PostsService postsService;
+    SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
     ApiResponse<List<PostsResponse>> getAllPosts() {
@@ -81,6 +83,8 @@ public class PostsController {
     ApiResponse<PostsResponse> updatePost(@PathVariable String userId, @PathVariable String postId, @Valid @RequestBody PostsRequest request) {
         PostsResponse response = postsService.updatePost(userId, postId, request);
 
+        messagingTemplate.convertAndSend("/topic/posts/update", response);
+
         return ApiResponse.<PostsResponse>builder()
             .code(1000)
             .message("Post has been updated successfully")
@@ -91,6 +95,8 @@ public class PostsController {
     @DeleteMapping("/delete/{userId}/{postId}")
     ApiResponse<Void> deletePost(@PathVariable String userId, @PathVariable String postId) {
         postsService.deletePost(userId, postId);
+
+        messagingTemplate.convertAndSend("/topic/posts/delete", postId);
 
         return ApiResponse.<Void>builder()
             .code(1000)
