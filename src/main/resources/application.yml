@@ -9,11 +9,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/acnecare
     username: root
-<<<<<<< HEAD
     password: root
-=======
-    password: root # Đảm bảo mật khẩu này đúng với Database của bạn
->>>>>>> 054bb9831c037e2774798392d237e19a2e8423f1
   jpa:
     hibernate:
       ddl-auto: update
