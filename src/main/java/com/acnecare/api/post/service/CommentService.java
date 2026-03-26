@@ -20,7 +20,6 @@ import com.acnecare.api.user.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.var;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +45,7 @@ public class CommentService {
     }
     
     public CommentResponse createComment(String postId, CommentRequest request){
-        var userId = CurrentUserId.getCurrentUserId()
+        String userId = CurrentUserId.getCurrentUserId()
             .orElseThrow(()-> new AppException(ErrorCode.UNAUTHENTICATED));
         User user = userRepository.findById(userId)
             .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -62,7 +61,7 @@ public class CommentService {
     }
 
     public CommentResponse updateComment(String id, CommentRequest request){
-        var userId = CurrentUserId.getCurrentUserId()
+        String userId = CurrentUserId.getCurrentUserId()
             .orElseThrow(()-> new AppException(ErrorCode.UNAUTHENTICATED));
         Comment comment = commentRepository.findById(id)
             .orElseThrow(()-> new AppException(ErrorCode.COMMENT_NOT_FOUND));
@@ -74,7 +73,7 @@ public class CommentService {
     }
 
     public void deleteComment(String id){
-        var userId = CurrentUserId.getCurrentUserId()
+        String userId = CurrentUserId.getCurrentUserId()
             .orElseThrow(()-> new AppException(ErrorCode.UNAUTHENTICATED));
         Comment comment = commentRepository.findById(id)
             .orElseThrow(()-> new AppException(ErrorCode.COMMENT_NOT_FOUND));

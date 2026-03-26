@@ -16,9 +16,9 @@ import com.acnecare.api.common.helper.CurrentUserId;
 import com.acnecare.api.user.entity.User;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.var;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,25 +31,25 @@ public class BrandService {
 
     @PreAuthorize("hasAuthority('ROLE_BRAND')")
     public BrandProfileResponse getMyBrandProfile(){
-        var userId = CurrentUserId.getCurrentUserId()
+        String userId = CurrentUserId.getCurrentUserId()
         .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        var brandProfile = brandProfileRepository.findById(userId)
+        BrandProfile brandProfile = brandProfileRepository.findById(userId)
         .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
 
         return brandProfileMapper.toBrandProfileResponse(brandProfile);
     } 
 
     public void createMyBrandProfile(User user) {
-        var userId = user.getId();
-        var alreadyExists = brandProfileRepository.findById(userId);
+        String userId = user.getId();
+        Optional<BrandProfile> alreadyExists = brandProfileRepository.findById(userId);
         if (alreadyExists.isPresent()) {
             throw new AppException(ErrorCode.BRAND_ALREADY_HAS_PROFILE);
         }
         
         BrandProfile brandProfile = new BrandProfile();
         brandProfile.setUser(user);
-        var now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         brandProfile.setCreatedAt(now);
         brandProfile.setUpdatedAt(now);
         brandProfileRepository.save(brandProfile);
@@ -57,9 +57,9 @@ public class BrandService {
 
     @PreAuthorize("hasAuthority('ROLE_BRAND')")
     public BrandProfileResponse updateMyBrandProfile (BrandProfileUpdateRequest request){
-        var userId = CurrentUserId.getCurrentUserId().
+        String userId = CurrentUserId.getCurrentUserId().
             orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        var brandProfile = brandProfileRepository.findById(userId)
+        BrandProfile brandProfile = brandProfileRepository.findById(userId)
             .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
 
         if (!brandProfile.getUser().getId().equals(userId)) {
@@ -72,7 +72,7 @@ public class BrandService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public BrandProfileResponse getBrandProfileById(String id){
-        var brandProfile = brandProfileRepository.findById(id)
+        BrandProfile brandProfile = brandProfileRepository.findById(id)
         .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
 
         return brandProfileMapper.toBrandProfileResponse(brandProfile);
@@ -80,7 +80,7 @@ public class BrandService {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public BrandProfileResponse updateBrandProfileByAdmin(String id, AdminUpdateProfileBrandRequest request) {
-        var brandProfile = brandProfileRepository.findById(id)
+        BrandProfile brandProfile = brandProfileRepository.findById(id)
         .orElseThrow(() -> new AppException(ErrorCode.BRAND_PROFILE_NOT_FOUND));
         brandProfile.setVerificationStatus(request.getVerificationStatus());
         brandProfile.setRejectionReason(request.getRejectionReason());
