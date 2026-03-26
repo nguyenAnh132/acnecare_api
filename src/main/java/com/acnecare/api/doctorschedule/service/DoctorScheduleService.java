@@ -30,133 +30,138 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DoctorScheduleService {
 
-    DoctorScheduleRepository doctorScheduleRepository;
-    DoctorScheduleMapper doctorScheduleMapper;
-    DoctorProfileRepository doctorProfileRepository;
-    ConsultationServiceRepository consultationServiceRepository;
+        DoctorScheduleRepository doctorScheduleRepository;
+        DoctorScheduleMapper doctorScheduleMapper;
+        DoctorProfileRepository doctorProfileRepository;
+        ConsultationServiceRepository consultationServiceRepository;
 
-    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
-    public DoctorScheduleResponse createMySchedule(DoctorScheduleCreationRequest request) {
-        var userId = CurrentUserId.getCurrentUserId()
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+        public DoctorScheduleResponse createMySchedule(DoctorScheduleCreationRequest request) {
+                var userId = CurrentUserId.getCurrentUserId()
+                                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        var doctorProfile = doctorProfileRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
+                var doctorProfile = doctorProfileRepository.findById(userId)
+                                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
 
-        validateScheduleTime(request.getStartTime(), request.getEndTime());
+                validateScheduleTime(request.getStartTime(), request.getEndTime());
 
-        boolean overlapped = doctorScheduleRepository.existsByDoctorIdAndStartTimeLessThanAndEndTimeGreaterThan(
-                userId,
-                request.getEndTime(),
-                request.getStartTime()
-        );
+                boolean overlapped = doctorScheduleRepository.existsByDoctorIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                                userId,
+                                request.getEndTime(),
+                                request.getStartTime());
 
-        if (overlapped) {
-            throw new AppException(ErrorCode.DOCTOR_SCHEDULE_TIME_CONFLICT);
+                if (overlapped) {
+                        throw new AppException(ErrorCode.DOCTOR_SCHEDULE_TIME_CONFLICT);
+                }
+
+                DoctorSchedule doctorSchedule = doctorScheduleMapper.toDoctorSchedule(request);
+                doctorSchedule.setDoctor(doctorProfile);
+
+                if (request.getConsultationServiceId() != null && !request.getConsultationServiceId().isBlank()) {
+                        var consultationService = consultationServiceRepository
+                                        .findByIdAndDoctorId(request.getConsultationServiceId(), userId)
+                                        .orElseThrow(() -> new AppException(ErrorCode.CONSULTATION_SERVICE_NOT_FOUND));
+
+                        doctorSchedule.setConsultationService(consultationService);
+                }
+
+                return doctorScheduleMapper.toDoctorScheduleResponse(
+                                doctorScheduleRepository.save(doctorSchedule));
         }
 
-        DoctorSchedule doctorSchedule = doctorScheduleMapper.toDoctorSchedule(request);
-        doctorSchedule.setDoctor(doctorProfile);
+        @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+        public List<DoctorScheduleResponse> getMySchedules() {
+                var userId = CurrentUserId.getCurrentUserId()
+                                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        if (request.getConsultationServiceId() != null && !request.getConsultationServiceId().isBlank()) {
-            var consultationService = consultationServiceRepository
-                    .findByIdAndDoctorId(request.getConsultationServiceId(), userId)
-                    .orElseThrow(() -> new AppException(ErrorCode.CONSULTATION_SERVICE_NOT_FOUND));
+                doctorProfileRepository.findById(userId)
+                                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
 
-            doctorSchedule.setConsultationService(consultationService);
+                return doctorScheduleRepository.findByDoctorIdOrderByStartTimeAsc(userId).stream()
+                                .map(doctorScheduleMapper::toDoctorScheduleResponse)
+                                .toList();
         }
 
-        return doctorScheduleMapper.toDoctorScheduleResponse(
-                doctorScheduleRepository.save(doctorSchedule)
-        );
-    }
+        @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+        public DoctorScheduleResponse updateMySchedule(String scheduleId, DoctorScheduleUpdateRequest request) {
+                var userId = CurrentUserId.getCurrentUserId()
+                                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
-    public List<DoctorScheduleResponse> getMySchedules() {
-        var userId = CurrentUserId.getCurrentUserId()
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                var doctorSchedule = doctorScheduleRepository.findByIdAndDoctorId(scheduleId, userId)
+                                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_SCHEDULE_NOT_FOUND));
 
-        doctorProfileRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
+                validateScheduleTime(request.getStartTime(), request.getEndTime());
 
-        return doctorScheduleRepository.findByDoctorIdOrderByStartTimeAsc(userId).stream()
-                .map(doctorScheduleMapper::toDoctorScheduleResponse)
-                .toList();
-    }
+                boolean overlapped = doctorScheduleRepository.findByDoctorIdOrderByStartTimeAsc(userId).stream()
+                                .anyMatch(item -> !item.getId().equals(scheduleId)
+                                                && request.getStartTime().isBefore(item.getEndTime())
+                                                && request.getEndTime().isAfter(item.getStartTime()));
 
-    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
-    public DoctorScheduleResponse updateMySchedule(String scheduleId, DoctorScheduleUpdateRequest request) {
-        var userId = CurrentUserId.getCurrentUserId()
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                if (overlapped) {
+                        throw new AppException(ErrorCode.DOCTOR_SCHEDULE_TIME_CONFLICT);
+                }
 
-        var doctorSchedule = doctorScheduleRepository.findByIdAndDoctorId(scheduleId, userId)
-                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_SCHEDULE_NOT_FOUND));
+                doctorScheduleMapper.updateDoctorSchedule(request, doctorSchedule);
 
-        validateScheduleTime(request.getStartTime(), request.getEndTime());
+                if (request.getConsultationServiceId() != null && !request.getConsultationServiceId().isBlank()) {
+                        var consultationService = consultationServiceRepository
+                                        .findByIdAndDoctorId(request.getConsultationServiceId(), userId)
+                                        .orElseThrow(() -> new AppException(ErrorCode.CONSULTATION_SERVICE_NOT_FOUND));
 
-        boolean overlapped = doctorScheduleRepository.findByDoctorIdOrderByStartTimeAsc(userId).stream()
-                .anyMatch(item ->
-                        !item.getId().equals(scheduleId)
-                        && request.getStartTime().isBefore(item.getEndTime())
-                        && request.getEndTime().isAfter(item.getStartTime())
-                );
+                        doctorSchedule.setConsultationService(consultationService);
+                } else {
+                        doctorSchedule.setConsultationService(null);
+                }
 
-        if (overlapped) {
-            throw new AppException(ErrorCode.DOCTOR_SCHEDULE_TIME_CONFLICT);
+                return doctorScheduleMapper.toDoctorScheduleResponse(
+                                doctorScheduleRepository.save(doctorSchedule));
         }
 
-        doctorScheduleMapper.updateDoctorSchedule(request, doctorSchedule);
+        @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
+        public void deleteMySchedule(String scheduleId) {
+                var userId = CurrentUserId.getCurrentUserId()
+                                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        if (request.getConsultationServiceId() != null && !request.getConsultationServiceId().isBlank()) {
-            var consultationService = consultationServiceRepository
-                    .findByIdAndDoctorId(request.getConsultationServiceId(), userId)
-                    .orElseThrow(() -> new AppException(ErrorCode.CONSULTATION_SERVICE_NOT_FOUND));
+                var doctorSchedule = doctorScheduleRepository.findByIdAndDoctorId(scheduleId, userId)
+                                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_SCHEDULE_NOT_FOUND));
 
-            doctorSchedule.setConsultationService(consultationService);
-        } else {
-            doctorSchedule.setConsultationService(null);
+                doctorScheduleRepository.delete(doctorSchedule);
         }
 
-        return doctorScheduleMapper.toDoctorScheduleResponse(
-                doctorScheduleRepository.save(doctorSchedule)
-        );
-    }
+        // Thêm tham số String serviceId vào hàm
+        public List<DoctorScheduleResponse> getSchedulesByDoctorId(String doctorId, String serviceId, LocalDate date) {
+                doctorProfileRepository.findById(doctorId)
+                                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
 
-    @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
-    public void deleteMySchedule(String scheduleId) {
-        var userId = CurrentUserId.getCurrentUserId()
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                LocalDateTime start = date.atStartOfDay();
+                LocalDateTime end = date.plusDays(1).atStartOfDay();
 
-        var doctorSchedule = doctorScheduleRepository.findByIdAndDoctorId(scheduleId, userId)
-                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_SCHEDULE_NOT_FOUND));
+                // Kiểm tra nếu không truyền serviceId thì trả về mảng rỗng (Bắt buộc phải chọn
+                // dịch vụ)
+                if (serviceId == null || serviceId.isBlank()) {
+                        return List.of();
+                }
 
-        doctorScheduleRepository.delete(doctorSchedule);
-    }
-
-    public List<DoctorScheduleResponse> getSchedulesByDoctorId(String doctorId, LocalDate date) {
-        doctorProfileRepository.findById(doctorId)
-                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
-
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
-
-        return doctorScheduleRepository.findByDoctorIdAndStartTimeBetweenOrderByStartTimeAsc(doctorId, start, end)
-                .stream()
-                .filter(item -> "AVAILABLE".equals(item.getStatus()))
-                .map(doctorScheduleMapper::toDoctorScheduleResponse)
-                .toList();
-    }
-
-    public DoctorScheduleResponse getScheduleById(String scheduleId) {
-        var doctorSchedule = doctorScheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_SCHEDULE_NOT_FOUND));
-
-        return doctorScheduleMapper.toDoctorScheduleResponse(doctorSchedule);
-    }
-
-    private void validateScheduleTime(LocalDateTime startTime, LocalDateTime endTime) {
-        if (!endTime.isAfter(startTime)) {
-            throw new AppException(ErrorCode.INVALID_DOCTOR_SCHEDULE_TIME);
+                // Dùng hàm Repository mới tạo ở trên
+                return doctorScheduleRepository
+                                .findByDoctorIdAndConsultationServiceIdAndStartTimeLessThanAndEndTimeGreaterThanOrderByStartTimeAsc(
+                                                doctorId, serviceId, end, start)
+                                .stream()
+                                .filter(item -> "AVAILABLE".equals(item.getStatus()))
+                                .map(doctorScheduleMapper::toDoctorScheduleResponse)
+                                .toList();
         }
-    }
+
+        public DoctorScheduleResponse getScheduleById(String scheduleId) {
+                var doctorSchedule = doctorScheduleRepository.findById(scheduleId)
+                                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_SCHEDULE_NOT_FOUND));
+
+                return doctorScheduleMapper.toDoctorScheduleResponse(doctorSchedule);
+        }
+
+        private void validateScheduleTime(LocalDateTime startTime, LocalDateTime endTime) {
+                if (!endTime.isAfter(startTime)) {
+                        throw new AppException(ErrorCode.INVALID_DOCTOR_SCHEDULE_TIME);
+                }
+        }
 }

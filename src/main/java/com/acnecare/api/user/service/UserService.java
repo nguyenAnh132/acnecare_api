@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
-import com.acnecare.api.patient.service.PatientService;
+import com.acnecare.api.patient.service.PatientProfileService;
 import com.acnecare.api.doctor.service.DoctorService;
 import com.acnecare.api.brand.service.BrandService;
 import com.acnecare.api.admin.service.AdminService;
@@ -39,7 +39,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     RoleReposity roleRepository;
-    PatientService patientService;
+    PatientProfileService patientService;
     DoctorService doctorService;
     BrandService brandService;
     AdminService adminService;

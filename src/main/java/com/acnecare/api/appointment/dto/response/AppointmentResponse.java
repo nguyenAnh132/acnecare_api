@@ -31,4 +31,7 @@ public class AppointmentResponse {
     String doctorId;
     String doctorName;
     String doctorAvatar;
+
+    String serviceId;
+    String serviceName;
 }

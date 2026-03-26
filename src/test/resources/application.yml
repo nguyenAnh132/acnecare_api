@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:acnecare_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  main:
+    allow-bean-definition-overriding: true
+
+# keep SecurityConfig happy in tests
+cors:
+  allowed-origins: "http://localhost"
+
+logging:
+  level:
+    org.hibernate.SQL: warn
+    org.hibernate.type.descriptor.sql: warn

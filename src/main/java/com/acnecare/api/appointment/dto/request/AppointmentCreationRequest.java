@@ -27,6 +27,8 @@ public class AppointmentCreationRequest {
 
     @NotBlank(message = "Vui lòng chọn phương thức thanh toán!")
     String paymentMethod;
+    @NotBlank(message = "Vui lòng chọn dịch vụ khám!")
+    String serviceId;
 
     String note;
 }
