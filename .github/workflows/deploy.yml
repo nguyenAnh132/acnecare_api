@@ -2,7 +2,7 @@ name: CI/CD Pipeline for AcneCare
 
 on:
   push:
-    branches: [ "develop" ] # Lưu ý: đổi sang dev thử
+    branches: [ "develop" ] # Lưu ý: đổi sang dev thử xem
 
 jobs:
   build-and-push:
