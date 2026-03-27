@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import jakarta.annotation.Nullable;
 
 @Data
 @NoArgsConstructor
@@ -13,5 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RefreshRequest {
+
+    @Nullable
     String refreshToken;
 }

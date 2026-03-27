@@ -34,6 +34,7 @@ public enum ErrorCode {
     PATIENT_PROFILE_NOT_FOUND(1011, "Patient profile not found", HttpStatus.NOT_FOUND),
     PATIENT_PROFILE_ALREADY_EXISTS(1012, "Patient profile already exists", HttpStatus.BAD_REQUEST),
 
+    INVALID_CLIENT_TYPE(1012, "Invalid client type", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_ERROR(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Brand profile error codes

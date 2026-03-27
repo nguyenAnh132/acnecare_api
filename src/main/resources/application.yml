@@ -21,9 +21,21 @@ spring:
       port: 6379
 
 jwt:
-  signer_key: "fb886b389ba6cd149a7deef483af664b62ff17776eb0d04a991251c0e4fba92e"
+  signer-key: "fb886b389ba6cd149a7deef483af664b62ff17776eb0d04a991251c0e4fba92e"
   access-token-valid-duration: 3600
   refresh-token-valid-duration: 604800
+
+auth:
+  cookie:
+    access-token-name: "access_token"
+    refresh-token-name: "refresh_token"
+    http-only: true
+    secure: false
+    same-site: Lax
+    max-access-token-age: 3600
+    max-refresh-token-age: 604800
+    access-path: /
+    refresh-path: /api/auth
 
 cors:
   allowed-origins: "http://localhost:5173"
