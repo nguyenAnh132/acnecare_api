@@ -46,7 +46,7 @@ import com.acnecare.api.auth.dto.request.RefreshRequest;
 public class AuthenticationService {
 
     @NonFinal
-    @Value("${jwt.signer_key}")
+    @Value("${jwt.signer-key}")
     protected String signerKey;
 
     @NonFinal
@@ -60,7 +60,10 @@ public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedRepository invalidatedRepository;
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request)
+            throws JOSEException, ParseException, AppException {
+
+
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         var user = userRepository.findByEmail(request.getEmail())
@@ -85,7 +88,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse refreshToken(RefreshRequest request)
-            throws JOSEException, ParseException {
+            throws JOSEException, ParseException, AppException {
 
         var signedJWT = verifyRefreshToken(request.getRefreshToken());
         var jti = signedJWT.getJWTClaimsSet().getJWTID();
@@ -113,9 +116,8 @@ public class AuthenticationService {
     }
 
     public void logout(LogoutRequest request)
-
-            throws JOSEException, ParseException {
-
+            throws JOSEException, ParseException, AppException {
+        
         var signedAccessToken = verifyAccessToken(request.getAccessToken());
         var jtiAccessToken = signedAccessToken.getJWTClaimsSet().getJWTID();
 
@@ -268,14 +270,3 @@ public class AuthenticationService {
     }
 
 }
-
-// jwt: header, payload, signature
-
-// header: algorithm:SHA512, SHA256
-
-// Payload: subject, issuer, issueTime, expirationTime, jwtID, roles, type
-
-// signature: HMACSHA512(base64UrlEncode(header) + "." +
-// base64UrlEncode(payload), secretKey)
-
-//

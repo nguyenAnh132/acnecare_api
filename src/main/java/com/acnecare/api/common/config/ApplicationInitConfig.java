@@ -17,9 +17,6 @@ import java.util.Set;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import com.acnecare.api.acne.repository.AcneRepository;
-import com.acnecare.api.acne.entity.Acne;
-import java.util.List;
-
 @Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
