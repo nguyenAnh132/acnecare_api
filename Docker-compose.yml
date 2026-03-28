@@ -1,0 +1,64 @@
+services:
+  # --- Service Database: MySQL 8.0 ---
+  mysql-db:
+    image: mysql:8.0.45-debian
+    container_name: acnecare-mysql
+    environment:
+      MYSQL_DATABASE: acnecare
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306" # Dùng 3307 ở máy thật để tránh trùng với MySQL cài sẵn
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - acnecare-network
+
+  # --- Service Cache: Redis ---
+  redis-cache:
+    image: redis:alpine
+    container_name: acnecare-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - acnecare-network
+
+  # --- Service App: AcneCare API ---
+  app:
+    image: batong25/acnecare-api:v1
+    container_name: acnecare-app
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      # Kết nối Database dùng tên service "mysql-db"
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/acnecare?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+
+      # Kết nối Redis dùng tên service "redis-cache"
+      - SPRING_DATA_REDIS_HOST=redis-cache
+      - SPRING_DATA_REDIS_PORT=6379
+
+      # Cấu hình bảo mật và JWT
+      - SIGNER_KEY=fb886b389ba6cd149a7deef483af664b62ff17776eb0d04a991251c0e4fba92e
+      - JWT_SIGNER_KEY=fb886b389ba6cd149a7deef483af664b62ff17776eb0d04a991251c0e4fba92e
+
+      # Cấu hình Storage và CORS
+      - STORAGE_BASE_URL=http://localhost:8080/api
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173
+    volumes:
+      - ./uploads:/app/uploads # Đồng bộ thư mục upload ảnh ra máy thật
+    networks:
+      - acnecare-network
+
+networks:
+  acnecare-network:
+    driver: bridge

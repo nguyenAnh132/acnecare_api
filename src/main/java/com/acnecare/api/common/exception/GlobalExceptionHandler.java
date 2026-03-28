@@ -4,11 +4,17 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import com.acnecare.api.common.dto.ApiResponse;
+import com.acnecare.api.common.storage.StorageFolder;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.validation.ConstraintViolation;
@@ -76,6 +82,21 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
+
+        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    ResponseEntity<ApiResponse<?>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        String validValues = Arrays.stream(StorageFolder.values())
+                .map(f -> f.getPath())
+                .collect(Collectors.joining(", "));
+
+        return ResponseEntity.badRequest().body(
+                ApiResponse.builder()
+                        .code(ErrorCode.INVALID_STORAGE_FOLDER.getCode())
+                        .message("Invalid folder. Allowed values: " + validValues)
+                        .build()
+        );
+    }
+
 
     private String mapAttrubute(String message, Map<String, Object> attributes) {
         String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));

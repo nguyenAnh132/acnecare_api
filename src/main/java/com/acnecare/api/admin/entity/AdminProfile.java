@@ -19,7 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 @Entity
-@Table(name = "users")
+@Table(name = "admin_profiles")
 @Getter
 @Setter
 @NoArgsConstructor

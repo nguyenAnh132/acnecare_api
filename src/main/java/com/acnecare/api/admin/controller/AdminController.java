@@ -23,7 +23,7 @@ public class AdminController {
 
     AdminService adminService;
 
-    @GetMapping("/profile/me")
+    @GetMapping
     ApiResponse<AdminProfileResponse> getMyAdminProfile() {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
@@ -32,7 +32,7 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("/profile/{id}")
+    @GetMapping("/{id}")
     ApiResponse<AdminProfileResponse> getAdminProfileById(String id) {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)
@@ -41,7 +41,7 @@ public class AdminController {
                 .build();
     }
 
-    @PutMapping("/profile/me")
+    @PutMapping
     ApiResponse<AdminProfileResponse> updateMyAdminProfile() {
         return ApiResponse.<AdminProfileResponse>builder()
                 .code(1000)

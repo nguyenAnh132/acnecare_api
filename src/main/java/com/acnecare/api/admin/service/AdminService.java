@@ -1,17 +1,18 @@
 package com.acnecare.api.admin.service;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 
 import com.acnecare.api.admin.entity.AdminProfile;
-
+import com.acnecare.api.admin.repository.AdminRepository;
 import com.acnecare.api.user.entity.User;
 import com.acnecare.api.user.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.acnecare.api.admin.mapper.AdminProfileMapper;
+import com.acnecare.api.admin.mapper.AdminMapper;    
 import com.acnecare.api.admin.dto.response.AdminProfileResponse;
 
 import com.acnecare.api.common.exception.AppException;
@@ -23,8 +24,6 @@ import com.acnecare.api.common.helper.CurrentUserId;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import com.acnecare.api.admin.repository.AdminProfileRepository;
-
 @Service
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -32,8 +31,8 @@ import com.acnecare.api.admin.repository.AdminProfileRepository;
 public class AdminService {
 
     private final UserRepository userRepository = null;
-    private final AdminProfileRepository adminProfileRepository = null;
-    private final AdminProfileMapper adminProfileMapper = null;
+    private final AdminRepository adminProfileRepository = null;
+    private final AdminMapper adminMapper = null;
 
     public void createMyAdminProfile(User user) {
 
@@ -77,7 +76,7 @@ public class AdminService {
         AdminProfile adminProfile = adminProfileRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ADMIN_PROFILE_NOT_FOUND));
 
-        return adminProfileMapper.toAdminProfileResponse(adminProfile);
+        return adminMapper.toAdminProfileResponse(adminProfile);
 
     }
 

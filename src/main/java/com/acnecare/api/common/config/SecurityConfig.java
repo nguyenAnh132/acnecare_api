@@ -34,6 +34,9 @@ public class SecurityConfig {
     @NonNull
     private String allowOrigin;
 
+    @Autowired
+    private CookieOrHeaderBearerTokenResolver cookieOrHeaderBearerTokenResolver;
+
     // ENDPOINT POST PUBLIC
     private final String[] PUBLIC_ENDPOINTS = {
             "/users",
@@ -43,6 +46,7 @@ public class SecurityConfig {
             "/messages/**",
             "/chatroom/**",
             "/messages/"
+            "/auth/logout",
     };
 
     // ENDPOINT GET PUBLIC
@@ -54,6 +58,10 @@ public class SecurityConfig {
             "/chatroom/**",
             "/messages/**",
             "/messages/"
+            "/files/avatar/**",
+            "/files/logo/**",
+            "/files/products/**",
+            "/files/posts/**",
     };
 
     @Bean
@@ -64,9 +72,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_GET).permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated());
 
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
+        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2
+                .bearerTokenResolver(cookieOrHeaderBearerTokenResolver)
+                .jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
@@ -92,11 +103,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() { //
+    public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin(allowOrigin);
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
+
+        corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
