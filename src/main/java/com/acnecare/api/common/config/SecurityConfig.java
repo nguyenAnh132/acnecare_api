@@ -43,6 +43,9 @@ public class SecurityConfig {
             "/auth/login",
             "/auth/introspect",
             "/auth/refresh",
+            "/messages/**",
+            "/chatroom/**",
+            "/messages/"
             "/auth/logout",
     };
 
@@ -52,6 +55,9 @@ public class SecurityConfig {
             "/categories/**",
             "/products",
             "/products/**",
+            "/chatroom/**",
+            "/messages/**",
+            "/messages/"
             "/files/avatar/**",
             "/files/logo/**",
             "/files/products/**",

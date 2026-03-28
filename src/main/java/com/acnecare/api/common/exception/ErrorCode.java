@@ -85,6 +85,8 @@ public enum ErrorCode {
     INVALID_HEIGHT(1022, "Invalid height", HttpStatus.BAD_REQUEST),
     INVALID_WEIGHT(1023, "Invalid weight", HttpStatus.BAD_REQUEST),
     INVALID_ADDRESS(1024, "Invalid address", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST(1025, "Invalid request", HttpStatus.BAD_REQUEST),
+
     // DOMAIN ERRORS
     // category
     CATEGORY_ALREADY_EXISTS(2001, "Category already exists", HttpStatus.BAD_REQUEST),
@@ -107,6 +109,10 @@ public enum ErrorCode {
     INVALID_PRODUCT_URL(2012, "Invalid product URL", HttpStatus.BAD_REQUEST),
     INVALID_CATEGORY_ID(2013, "Invalid category ID", HttpStatus.BAD_REQUEST),
 
+    // chatroom Error
+    CHATROOM_FORBIDDEN(4003, "Cant acceces this room", HttpStatus.FORBIDDEN),
+    CHAT_ROOM_NOT_FOUND(4004, "Chat room not found", HttpStatus.NOT_FOUND),
+    NO_MESSAGES_IN_ROOM(4005, "No message in room", HttpStatus.NO_CONTENT)
     // APPOINTMENT ERRORS
     APPOINTMENT_NOT_FOUND(4000, "Appointment not found", HttpStatus.NOT_FOUND),
     APPOINTMENT_TIME_UNAVAILABLE(4001, "Doctor is unavailable at the selected time", HttpStatus.BAD_REQUEST),
