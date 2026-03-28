@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.acnecare.api.common.dto.ApiResponse;
 import com.acnecare.api.doctor.dto.request.DoctorProfileUpdateRequest;
+import com.acnecare.api.doctor.dto.request.DoctorProfileStatusUpdateRequest; // <-- Thêm import này
 import com.acnecare.api.doctor.dto.response.DoctorProfileResponse;
 import com.acnecare.api.doctor.service.DoctorService;
 
@@ -51,6 +52,18 @@ public class DoctorController {
                 .code(1000)
                 .message("Doctor Profile has been retrieved successfully")
                 .result(doctorProfileService.getDoctorProfileById(id))
+                .build();
+    }
+
+    @PutMapping("/profile/{id}/status")
+    ApiResponse<DoctorProfileResponse> updateDoctorProfileStatus(
+            @PathVariable String id,
+            @RequestBody @Valid DoctorProfileStatusUpdateRequest request) {
+
+        return ApiResponse.<DoctorProfileResponse>builder()
+                .code(1000)
+                .message("Doctor Profile status has been updated successfully")
+                .result(doctorProfileService.updateDoctorProfileStatus(id, request))
                 .build();
     }
 }

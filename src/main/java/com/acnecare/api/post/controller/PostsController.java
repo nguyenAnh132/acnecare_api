@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 
 public class PostsController {
-    
+
     PostsService postsService;
     SimpMessagingTemplate messagingTemplate;
 
@@ -39,10 +39,10 @@ public class PostsController {
         List<PostsResponse> response = postsService.getAllPosts();
 
         return ApiResponse.<List<PostsResponse>>builder()
-            .code(1000)
-            .message("Posts have been retrieved successfully")
-            .result(response)
-            .build();
+                .code(1000)
+                .message("Posts have been retrieved successfully")
+                .result(response)
+                .build();
     }
 
     @GetMapping("/users/{userId}")
@@ -50,10 +50,10 @@ public class PostsController {
         List<PostsResponse> response = postsService.getPostsByUserId(userId);
 
         return ApiResponse.<List<PostsResponse>>builder()
-            .code(1000)
-            .message("Posts have been retrieved successfully")
-            .result(response)
-            .build();
+                .code(1000)
+                .message("Posts have been retrieved successfully")
+                .result(response)
+                .build();
     }
 
     @GetMapping("/{postId}")
@@ -61,36 +61,40 @@ public class PostsController {
         PostsResponse response = postsService.getPostById(postId);
 
         return ApiResponse.<PostsResponse>builder()
-            .code(1000)
-            .message("Post has been retrieved successfully")
-            .result(response)
-            .build();
+                .code(1000)
+                .message("Post has been retrieved successfully")
+                .result(response)
+                .build();
     }
-    
+
     @PostMapping("/{userId}")
     ApiResponse<PostsResponse> createPost(@PathVariable String userId, @Valid @RequestBody PostsRequest request) {
         PostsResponse response = postsService.createPost(userId, request);
 
         return ApiResponse.<PostsResponse>builder()
-            .code(1000)
-            .message("Post has been created successfully")
-            .result(response)
-            .build();
+                .code(1000)
+                .message("Post has been created successfully")
+                .result(response)
+                .build();
     }
-    // Chú ý: Cần thêm userId vào request body để xác định người dùng nào đang cập nhật bài viết, hoặc có thể lấy userId từ token nếu có authentication
+
+    // Chú ý: Cần thêm userId vào request body để xác định người dùng nào đang cập
+    // nhật bài viết, hoặc có thể lấy userId từ token nếu có authentication
     // Cập nhật bài viết
     @PutMapping("/update/{userId}/{postId}")
-    ApiResponse<PostsResponse> updatePost(@PathVariable String userId, @PathVariable String postId, @Valid @RequestBody PostsRequest request) {
+    ApiResponse<PostsResponse> updatePost(@PathVariable String userId, @PathVariable String postId,
+            @Valid @RequestBody PostsRequest request) {
         PostsResponse response = postsService.updatePost(userId, postId, request);
 
         messagingTemplate.convertAndSend("/topic/posts/update", response);
 
         return ApiResponse.<PostsResponse>builder()
-            .code(1000)
-            .message("Post has been updated successfully")
-            .result(response)
-            .build();
+                .code(1000)
+                .message("Post has been updated successfully")
+                .result(response)
+                .build();
     }
+
     // Xóa bài viết
     @DeleteMapping("/delete/{userId}/{postId}")
     ApiResponse<Void> deletePost(@PathVariable String userId, @PathVariable String postId) {
@@ -99,9 +103,9 @@ public class PostsController {
         messagingTemplate.convertAndSend("/topic/posts/delete", postId);
 
         return ApiResponse.<Void>builder()
-            .code(1000)
-            .message("Post has been deleted successfully")
-            .build();
+                .code(1000)
+                .message("Post has been deleted successfully")
+                .build();
     }
 
 }

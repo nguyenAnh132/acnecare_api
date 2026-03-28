@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import com.acnecare.api.common.helper.CurrentUserId;
+import com.acnecare.api.doctor.dto.request.DoctorProfileStatusUpdateRequest;
 import com.acnecare.api.doctor.dto.request.DoctorProfileUpdateRequest;
 import com.acnecare.api.doctor.dto.response.DoctorProfileResponse;
 import com.acnecare.api.doctor.entity.DoctorProfile;
@@ -29,10 +30,10 @@ public class DoctorService {
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     public DoctorProfileResponse getMyDoctorProfile() {
         var userId = CurrentUserId.getCurrentUserId()
-            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         var doctorProfile = doctorProfileRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
 
         return doctorProfileMapper.toDoctorProfileResponse(doctorProfile);
     }
@@ -43,25 +44,25 @@ public class DoctorService {
         if (alreadyExists.isPresent()) {
             throw new AppException(ErrorCode.DOCTOR_ALREADY_HAS_PROFILE);
         }
-        
+
         DoctorProfile doctorProfile = new DoctorProfile();
         doctorProfile.setUser(user);
         doctorProfile.setVerificationStatus("PENDING");
         doctorProfile.setRatingAvg(0.0);
         doctorProfile.setRatingCount(0);
         doctorProfile.setRejectionReason(null);
-      
+
         doctorProfileRepository.save(doctorProfile);
-        
+
     }
 
     @PreAuthorize("hasAuthority('ROLE_DOCTOR')")
     public DoctorProfileResponse updateMyDoctorProfile(DoctorProfileUpdateRequest request) {
         var userId = CurrentUserId.getCurrentUserId()
-            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         var doctorProfile = doctorProfileRepository.findById(userId)
-            .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
 
         if (!doctorProfile.getUser().getId().equals(userId)) {
             throw new AppException(ErrorCode.ACCESS_DENIED);
@@ -74,8 +75,24 @@ public class DoctorService {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public DoctorProfileResponse getDoctorProfileById(String id) {
         var doctorProfile = doctorProfileRepository.findById(id)
-            .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
 
         return doctorProfileMapper.toDoctorProfileResponse(doctorProfile);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public DoctorProfileResponse updateDoctorProfileStatus(String id, DoctorProfileStatusUpdateRequest request) {
+        var doctorProfile = doctorProfileRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DOCTOR_PROFILE_NOT_FOUND));
+
+        doctorProfile.setVerificationStatus(request.getVerificationStatus());
+
+        if ("REJECTED".equals(request.getVerificationStatus())) {
+            doctorProfile.setRejectionReason(request.getRejectionReason());
+        } else {
+            doctorProfile.setRejectionReason(null);
+        }
+
+        return doctorProfileMapper.toDoctorProfileResponse(doctorProfileRepository.save(doctorProfile));
     }
 }

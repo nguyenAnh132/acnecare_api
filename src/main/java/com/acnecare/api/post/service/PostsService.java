@@ -56,8 +56,8 @@ public class PostsService {
                 .toList();
     }
 
-    // 
-    private void enrichPostWithLikeInfo(PostsResponse response, String postID){
+    //
+    private void enrichPostWithLikeInfo(PostsResponse response, String postID) {
         long totalLikes = likesRepository.countByPostsId(postID);
         response.setLikesCount(totalLikes);
         try {
@@ -74,17 +74,17 @@ public class PostsService {
     }
 
     //
-    private void enrichPostWithCommentInfo(PostsResponse response, String postId){
+    private void enrichPostWithCommentInfo(PostsResponse response, String postId) {
         List<Comment> comments = commentRepository.findByPostsIdOrderByCreateAtDesc(postId);
-        
+
         List<CommentResponse> commentResponses = comments.stream()
                 .map(commentMapper::toCommentResponse)
                 .toList();
-                
+
         response.setComments(commentResponses);
         response.setCommentsCount(commentResponses.size());
     }
-    
+
     // Lấy tất cả bài viết
     @Transactional(readOnly = true)
     public List<PostsResponse> getAllPosts() {
@@ -136,6 +136,7 @@ public class PostsService {
 
                 }).toList();
     }
+
     // làm lazy loading cho user trong posts response
     // Lấy chi tiết bài viết
     public PostsResponse getPostById(String postId) {
@@ -156,10 +157,11 @@ public class PostsService {
         enrichPostWithCommentInfo(response, post.getId());
         return response;
     }
+
     // Tạo bài viết mới
-    public PostsResponse createPost(String userId, PostsRequest request){
+    public PostsResponse createPost(String userId, PostsRequest request) {
         var isValidUser = userRepository.existsById(userId);
-        if (!isValidUser){
+        if (!isValidUser) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
 
@@ -171,8 +173,11 @@ public class PostsService {
 
         return postsMapper.toPostsResponse(postsRepository.save(posts));
     }
+
     // Cập nhật bài viết
-    // Thêm để kiểm tra AccessDenied nếu userId không khớp với userId của bài viết, hoặc có thể kiểm tra trong controller bằng cách lấy userId từ token và so sánh với userId trong request body
+    // Thêm để kiểm tra AccessDenied nếu userId không khớp với userId của bài viết,
+    // hoặc có thể kiểm tra trong controller bằng cách lấy userId từ token và so
+    // sánh với userId trong request body
     // @PostAuthorize("returnObject.user.name == authentication.name")
     public PostsResponse updatePost(String userId, String postId, PostsRequest request) {
         var isValidUser = userRepository.existsById(userId);
@@ -181,7 +186,7 @@ public class PostsService {
         }
         Posts posts = postsRepository.findById(postId).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 
-        if(userId != null && !posts.getUser().getId().equals(userId)) {
+        if (userId != null && !posts.getUser().getId().equals(userId)) {
             throw new AppException(ErrorCode.ACCESS_DENIED);
         }
 
@@ -192,6 +197,7 @@ public class PostsService {
 
         return postsMapper.toPostsResponse(postsRepository.save(posts));
     }
+
     // Xóa bài viết
     // @PostAuthorize("returnObject.user.name == authentication.name")
     public void deletePost(String userId, String postId) {
