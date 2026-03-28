@@ -182,4 +182,10 @@ public class ProductService {
         product.setApprovalStatus(status); // Cập nhật thành APPROVED hoặc PENDING
         return productMapper.toProductResponse(productRepository.save(product));
     }
+
+    public ProductResponse getProductById(String id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        return productMapper.toProductResponse(product);
+    }
 }

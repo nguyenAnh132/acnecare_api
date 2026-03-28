@@ -47,7 +47,7 @@ public class UserService {
     // #region PUBLIC METHODS
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
-            throw new AppException(ErrorCode.EMAIL_ALREDY_EXISTS);
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
 
         User user = userMapper.toUser(request);
         user.setCreatedAt(LocalDateTime.now());
@@ -112,6 +112,26 @@ public class UserService {
     public UserResponse changeUserStatus(String id, String status) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if ("ACTIVE".equals(status)) {
+            boolean isDoctor = user.getRoles().stream()
+                    .anyMatch(role -> "DOCTOR".equals(role.getName()));
+
+            if (isDoctor) {
+                try {
+                    var doctorProfile = doctorService.getDoctorProfileById(id);
+
+                    if (!"ACCEPTED".equals(doctorProfile.getVerificationStatus())) {
+                        throw new AppException(ErrorCode.DOCTOR_PROFILE_NOT_APPROVED);
+                    }
+                } catch (AppException e) {
+                    if (e.getErrorCode() == ErrorCode.DOCTOR_PROFILE_NOT_FOUND) {
+                        throw new AppException(ErrorCode.DOCTOR_PROFILE_NOT_APPROVED);
+                    }
+                    throw e;
+                }
+            }
+        }
 
         user.setStatus(status);
         user.setUpdatedAt(LocalDateTime.now());

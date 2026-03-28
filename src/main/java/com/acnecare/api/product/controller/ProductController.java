@@ -6,6 +6,7 @@ import com.acnecare.api.product.dto.request.ProductUpdateRequest;
 import com.acnecare.api.product.dto.response.ProductResponse;
 import com.acnecare.api.product.service.ProductService;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -74,6 +75,15 @@ public class ProductController {
                 .code(1000)
                 .message("Cập nhật trạng thái thành công")
                 .result(productService.updateApprovalStatus(id, status))
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<ProductResponse> getProductById(@PathVariable String id) {
+        return ApiResponse.<ProductResponse>builder()
+                .code(1000)
+                .message("Product retrieved successfully")
+                .result(productService.getProductById(id))
                 .build();
     }
 
