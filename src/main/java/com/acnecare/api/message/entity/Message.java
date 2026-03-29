@@ -30,7 +30,7 @@ public class Message {
     @Column(name = "room_id", nullable = false)
     private String roomId; // FK → rooms table (hoặc chat_rooms, conversations...)
 
-    @Column(name = "message_content", columnDefinition = "TEXT")
+    @Column(name = "message_content", columnDefinition = "LONGTEXT")
     private String messageContent;
 
     @Column(name = "is_read_at")

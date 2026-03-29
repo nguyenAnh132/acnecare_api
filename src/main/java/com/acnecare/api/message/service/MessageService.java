@@ -1,15 +1,20 @@
 package com.acnecare.api.message.service;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import com.acnecare.api.message.entity.MessageImage;
 import com.acnecare.api.chatroom.entity.ChatRoom;
 import com.acnecare.api.chatroom.repository.ChatRoomRepository;
 import com.acnecare.api.chatroom.service.ChatRoomService;
@@ -24,6 +29,7 @@ import com.acnecare.api.message.entity.Message;
 import com.acnecare.api.message.enums.MessageType;
 import com.acnecare.api.message.mapper.MessageMapper;
 import com.acnecare.api.message.repository.MessageRepository;
+import com.acnecare.api.message.repository.MessageImageRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -38,6 +44,8 @@ public class MessageService {
     MessageRepository messageRepository;
     ChatRoomService chatRoomService; // nếu bạn muốn gọi service khác
     MessageMapper messageMapper;
+    @Autowired
+    MessageImageRepository messageImageRepository;
 
     /**
      * Lấy danh sách tin nhắn của một phòng chat theo phân trang
@@ -135,5 +143,58 @@ public class MessageService {
         List<Message> listMessage = messageRepository.findLatestMessagePerRoomForUser(userId);
 
         return messageMapper.toMessageResponseList(listMessage);
+    }
+
+    @Transactional
+    public MessageResponse saveImageMessage(String roomId, String senderId,
+            org.springframework.web.multipart.MultipartFile file) {
+        try {
+            // 1. LƯU FILE VÀO THƯ MỤC TRÊN MÁY TÍNH (uploads/messages)
+            String UPLOAD_DIR = "uploads/messages/";
+            java.io.File dir = new java.io.File(UPLOAD_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String fileName = java.util.UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            java.nio.file.Path filePath = java.nio.file.Paths.get(UPLOAD_DIR + fileName);
+            java.nio.file.Files.copy(file.getInputStream(), filePath,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+            // 🚨 SỬA Ở ĐÂY: Chỉ lưu đường dẫn tương đối vào Database
+            String dbImageUrl = "/files/messages/" + fileName;
+
+            // 2. LƯU VÀO BẢNG messages
+            ChatRoom chatRoom = chatRoomService.getChatRoomsByUserId(roomId);
+
+            Message message = new Message();
+            message.setRoomId(roomId);
+            message.setSenderId(senderId);
+            message.setType(MessageType.IMAGES);
+            message.setMessageContent(dbImageUrl); // Lưu "/files/messages/xxx.jpg"
+            message.setCreateAt(LocalDateTime.now());
+
+            Message savedMessage = messageRepository.save(message);
+
+            // 3. LƯU VÀO BẢNG message_images
+            MessageImage messageImage = new MessageImage();
+            messageImage.setMessage(savedMessage);
+            messageImage.setImageUrl(dbImageUrl);
+            messageImage.setFileName(file.getOriginalFilename());
+            messageImage.setFileSize(file.getSize());
+            messageImage.setMimeType(file.getContentType());
+            messageImage.setUploadAt(LocalDateTime.now());
+            messageImageRepository.save(messageImage);
+
+            // 4. CẬP NHẬT THỜI GIAN PHÒNG CHAT
+            chatRoom.setLastMessageAt(savedMessage.getCreateAt());
+            chatRoom.setUpdatedAt(LocalDateTime.now());
+            chatRoomService.saveChatRoom(chatRoom);
+
+            return messageMapper.toMessageResponse(savedMessage);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi lưu ảnh: " + e.getMessage());
+        }
     }
 }

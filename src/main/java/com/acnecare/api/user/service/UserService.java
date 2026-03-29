@@ -116,6 +116,8 @@ public class UserService {
         if ("ACTIVE".equals(status)) {
             boolean isDoctor = user.getRoles().stream()
                     .anyMatch(role -> "DOCTOR".equals(role.getName()));
+            boolean isBrand = user.getRoles().stream()
+                    .anyMatch(role -> "BRAND".equals(role.getName()));
 
             if (isDoctor) {
                 try {
@@ -129,6 +131,18 @@ public class UserService {
                         throw new AppException(ErrorCode.DOCTOR_PROFILE_NOT_APPROVED);
                     }
                     throw e;
+                }
+            }
+            if (isBrand) {
+                try {
+                    var brandProfile = brandService.getBrandProfileById(id);
+                    String brandStatus = brandProfile.getVerificationStatus();
+                    if (!"ACCEPTED".equals(brandStatus) && !"APPROVED".equals(brandStatus)) {
+                        // NẾU BẠN CHƯA CÓ MÃ LỖI NÀY TRONG ErrorCode.java THÌ HÃY THÊM VÀO NHÉ
+                        throw new AppException(ErrorCode.BRAND_PROFILE_NOT_APPROVED);
+                    }
+                } catch (AppException e) {
+                    throw new AppException(ErrorCode.BRAND_PROFILE_NOT_APPROVED);
                 }
             }
         }

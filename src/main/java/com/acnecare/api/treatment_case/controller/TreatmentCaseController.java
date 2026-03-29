@@ -45,4 +45,12 @@ public class TreatmentCaseController {
                 .result(treatmentCaseService.getCaseById(caseId))
                 .build();
     }
+
+    @GetMapping("/doctor/cases")
+    public ApiResponse<List<TreatmentCaseResponse>> getCasesForDoctor() {
+        return ApiResponse.<List<TreatmentCaseResponse>>builder()
+                .code(1000)
+                .result(treatmentCaseService.getCasesByDoctor())
+                .build();
+    }
 }
