@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DEPLOY_DIR = '/var/www/itexam'
+        DEPLOY_DIR = '/var/www/acnecare_api'
     }
 
     parameters {
