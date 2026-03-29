@@ -1,0 +1,58 @@
+services:
+  mysql-db:
+    image: mysql:8.0.45-debian
+    container_name: acnecare-mysql
+    environment:
+      MYSQL_DATABASE: acnecare
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - acnecare-network
+
+  # --- Service Cache: Redis ---
+  redis-cache:
+    image: redis:alpine
+    container_name: acnecare-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - acnecare-network
+
+  # --- Service App: AcneCare API ---
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acnecare-app
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+    ports:
+      - "9090:9090"
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
+      - DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
+      - SPRING_DATA_REDIS_HOST=${SPRING_DATA_REDIS_HOST}
+      - SIGNER_KEY=${SIGNER_KEY}
+      - ACCESS_TOKEN_VALID_DURATION=${ACCESS_TOKEN_VALID_DURATION}
+      - REFRESH_TOKEN_VALID_DURATION=${REFRESH_TOKEN_VALID_DURATION}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - STORAGE_BASE_URL=${STORAGE_BASE_URL}
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - acnecare-network
+
+networks:
+  acnecare-network:
+    driver: bridge
