@@ -89,6 +89,7 @@ public enum ErrorCode {
         DOCTOR_ALREADY_HAS_PROFILE(3013, "Doctor already has a profile", HttpStatus.BAD_REQUEST),
         DOCTOR_PROFILE_NOT_APPROVED(3014, "Doctor profile is not approved", HttpStatus.FORBIDDEN),
         COMMENT_NOT_FOUND(3020, "Comment not found", HttpStatus.NOT_FOUND),
+        BRAND_PROFILE_NOT_APPROVED(3021, "Brand profile is not approved", HttpStatus.FORBIDDEN),
 
         // ==========================================
         // 5. APPOINTMENT & CHATROOM ERRORS (4000 - 4099)
@@ -142,7 +143,8 @@ public enum ErrorCode {
                         HttpStatus.BAD_REQUEST),
         CONSULTATION_ALREADY_EXISTS_FOR_APPOINTMENT(8103, "A consultation already exists for this appointment",
                         HttpStatus.BAD_REQUEST),
-
+        TREATMENT_PLAN_NOT_FOUND(8201, "Treatment plan not found", HttpStatus.NOT_FOUND),
+        ERROR_INVALID_REQUEST(8202, "Invalid request", HttpStatus.BAD_REQUEST),
         // ==========================================
         // 9. SYSTEM ERRORS (9000+)
         // ==========================================
