@@ -12,7 +12,7 @@ pipeline {
     parameters {
         string(
             name: 'SOURCE_REL_PATH',
-            defaultValue: '.i',
+            defaultValue: '.',
         )
     }
 
