@@ -28,28 +28,32 @@ pipeline {
                 sh """
                     set -e
                     mkdir -p '${env.DEPLOY_DIR}'
-                    rsync -a --delete --exclude '.env' --exclude 'uploads/' '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
+                    if [ ! -w '${env.DEPLOY_DIR}' ]; then
+                        echo "ERROR: Không có quyền ghi vào ${env.DEPLOY_DIR}. Chạy: sudo chown -R jenkins:jenkins ${env.DEPLOY_DIR}"
+                        exit 1
+                    fi
+                    rsync -a --delete --no-owner --no-group --exclude '.env' --exclude 'uploads/' '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
                 """
             }
         }
-
         stage('Docker: build & deploy') {
             steps {
-                dir("${env.DEPLOY_DIR}") {
-                    sh '''
-                        set -e
-                        docker compose -f docker-compose.yml pull mysql-db redis-cache
-                        docker compose -f docker-compose.yml up -d --build --force-recreate app
-                    '''
-                }
+                sh """
+                    set -e
+                    cd '${env.DEPLOY_DIR}'
+                    docker compose -f Docker-compose.yml pull mysql-db redis-cache
+                    docker compose -f Docker-compose.yml up -d --build --force-recreate app
+                """
             }
         }
 
         stage('Verify') {
             steps {
-                dir("${env.DEPLOY_DIR}") {
-                    sh 'docker compose -f docker-compose.yml ps'
-                }
+                sh """
+                    set -e
+                    cd '${env.DEPLOY_DIR}'
+                    docker compose -f Docker-compose.yml ps
+                """
             }
         }
     }
