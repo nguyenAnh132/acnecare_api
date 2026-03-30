@@ -69,7 +69,7 @@ pipeline {
                     set -e
                     cd '${env.DEPLOY_DIR}'
                     docker compose -f Docker-compose.yml ps
-                    test "$(docker compose -f Docker-compose.yml ps --status running --services | wc -l)" -ge 3 || (echo "ERROR: chưa đủ service chạy ổn định" && exit 1)
+                    test "\$(docker compose -f Docker-compose.yml ps --status running --services | wc -l)" -ge 3 || (echo "ERROR: chưa đủ service chạy ổn định" && exit 1)
                 """
             }
         }
