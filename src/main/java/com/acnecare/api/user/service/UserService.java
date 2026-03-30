@@ -3,7 +3,7 @@ package com.acnecare.api.user.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile; // 🚨 IMPORT
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -30,6 +30,9 @@ import com.acnecare.api.doctor.service.DoctorService;
 import com.acnecare.api.brand.service.BrandService;
 import com.acnecare.api.admin.service.AdminService;
 
+import com.acnecare.api.common.storage.FileStorageService; // 🚨 IMPORT
+import com.acnecare.api.common.storage.StorageFolder; // 🚨 IMPORT
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -43,9 +46,10 @@ public class UserService {
     DoctorService doctorService;
     BrandService brandService;
     AdminService adminService;
+    FileStorageService fileStorageService; // 🚨 KHAI BÁO THÊM SERVICE LƯU ẢNH
 
     // #region PUBLIC METHODS
-    public UserResponse createUser(UserCreationRequest request) {
+    public UserResponse createUser(UserCreationRequest request, MultipartFile avatar) {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
 
@@ -62,7 +66,16 @@ public class UserService {
         } else {
             user.setStatus(UserStatus.PENDING.name());
         }
-        userRepository.save(user);
+
+        // BƯỚC 1: Lưu User trước để hệ thống sinh ra chuỗi ID (UUID)
+        user = userRepository.save(user);
+
+        // BƯỚC 2: Nếu có file ảnh được gửi lên, lưu ảnh và cập nhật URL
+        if (avatar != null && !avatar.isEmpty()) {
+            var fileRes = fileStorageService.store(avatar, StorageFolder.avatar, user.getId());
+            user.setAvatarUrl(fileRes.getUrl());
+            userRepository.save(user); // Lưu lại lần nữa để cập nhật URL
+        }
 
         if (request.getRoles().contains("PATIENT")) {
             patientService.createMyPatientProfile(user);
@@ -89,7 +102,6 @@ public class UserService {
         }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @Transactional(readOnly = true)
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -138,7 +150,6 @@ public class UserService {
                     var brandProfile = brandService.getBrandProfileById(id);
                     String brandStatus = brandProfile.getVerificationStatus();
                     if (!"ACCEPTED".equals(brandStatus) && !"APPROVED".equals(brandStatus)) {
-                        // NẾU BẠN CHƯA CÓ MÃ LỖI NÀY TRONG ErrorCode.java THÌ HÃY THÊM VÀO NHÉ
                         throw new AppException(ErrorCode.BRAND_PROFILE_NOT_APPROVED);
                     }
                 } catch (AppException e) {
@@ -165,13 +176,29 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public UserResponse updateMyInfo(UserUpdateRequest request) {
+    public UserResponse updateMyInfo(UserUpdateRequest request, MultipartFile avatar) {
         User user = getMe();
 
         userMapper.updateUser(request, user);
         user.setUpdatedAt(LocalDateTime.now());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(getRolesFromRequest(request.getRoles()));
+
+        // Xử lý upload và ghi đè ảnh mới
+        if (avatar != null && !avatar.isEmpty()) {
+            // Xóa ảnh cũ (nếu có) để tránh rác ổ cứng
+            if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
+                try {
+                    fileStorageService.delete(user.getAvatarUrl());
+                } catch (Exception e) {
+                    log.warn("Không thể xóa ảnh avatar cũ của user {}: {}", user.getId(), e.getMessage());
+                }
+            }
+
+            // Upload ảnh mới
+            var fileRes = fileStorageService.store(avatar, StorageFolder.avatar, user.getId());
+            user.setAvatarUrl(fileRes.getUrl());
+        }
 
         return userMapper.toUserCreationResponse(userRepository.save(user));
     }
