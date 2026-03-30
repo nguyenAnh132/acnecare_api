@@ -62,7 +62,9 @@ public class SecurityConfig {
             "/files/logo/**",
             "/files/products/**",
             "/files/posts/**",
-            "/users/doctors/active/**"
+            "/users/doctors/active/**",
+            "/files/messages/**", // Thêm dòng này
+            "/files/**"
     };
 
     @Bean
@@ -107,6 +109,7 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin(allowOrigin);
+        corsConfiguration.addAllowedOriginPattern("http://localhost:5173");
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
 

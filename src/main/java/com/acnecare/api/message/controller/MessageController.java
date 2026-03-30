@@ -7,8 +7,10 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.acnecare.api.common.dto.ApiResponse;
 import com.acnecare.api.message.dto.request.MessageLatestRequest;
@@ -24,6 +26,8 @@ import com.acnecare.api.message.service.MessageService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MessageController {
     MessageService messageService;
+    @Autowired
+    private org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
 
     /**
      * Lấy danh sách tin nhắn của phòng chat theo phân trang (load more khi scroll).
@@ -34,8 +38,9 @@ public class MessageController {
      * @param size   số tin nhắn mỗi trang (thường 20-30)
      * @return Page<MessageResponse> bọc trong ApiResponse
      */
-    @GetMapping("/rooms")
-    public ApiResponse<PagedResponse<MessageResponse>> getMessagesByRoomId(@Valid @RequestBody MessgeGetRequest message) {
+    @PostMapping("/rooms")
+    public ApiResponse<PagedResponse<MessageResponse>> getMessagesByRoomId(
+            @Valid @RequestBody MessgeGetRequest message) {
 
         PagedResponse<MessageResponse> messages = messageService.getMessagesByRoomId(message);
 
@@ -73,7 +78,7 @@ public class MessageController {
      * @param roomId ID của phòng chat
      * @return MessageResponse hoặc null nếu phòng chưa có tin nhắn nào
      */
-    @GetMapping("/latest")
+    @PostMapping("/latest")
     public ApiResponse<List<MessageResponse>> getLatestMessage(@Valid @RequestBody MessageLatestRequest mRequest) {
 
         List<MessageResponse> latest = messageService.getLatestMessage(mRequest);
@@ -82,6 +87,25 @@ public class MessageController {
                 .code(1000)
                 .message(latest != null ? "SUCCESS" : "NO_MESSAGES")
                 .result(latest)
+                .build();
+    }
+
+    @PostMapping("/image")
+    public ApiResponse<MessageResponse> sendImageMessage(
+            @RequestParam("roomId") String roomId,
+            @RequestParam("senderId") String senderId,
+            @RequestParam("file") MultipartFile file) {
+
+        // 1. Gọi Service để lưu ảnh và DB
+        MessageResponse saved = messageService.saveImageMessage(roomId, senderId, file);
+
+        // 2. Bắn tin nhắn qua WebSocket cho các user trong phòng
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, saved);
+
+        return ApiResponse.<MessageResponse>builder()
+                .code(1000)
+                .message("IMAGE_SENT")
+                .result(saved)
                 .build();
     }
 }

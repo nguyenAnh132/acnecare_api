@@ -41,8 +41,8 @@ pipeline {
                 sh """
                     set -e
                     cd '${env.DEPLOY_DIR}'
-                    docker compose -f Docker-compose.yml pull mysql-db redis-cache
-                    docker compose -f Docker-compose.yml up -d --build --force-recreate app
+                    docker compose -f docker-compose.yml pull mysql-db redis-cache
+                    docker compose -f docker-compose.yml up -d --build --force-recreate app
                 """
             }
         }
@@ -52,7 +52,7 @@ pipeline {
                 sh """
                     set -e
                     cd '${env.DEPLOY_DIR}'
-                    docker compose -f Docker-compose.yml ps
+                    docker compose -f docker-compose.yml ps
                 """
             }
         }
@@ -60,7 +60,7 @@ pipeline {
 
     post {
         failure {
-            echo 'Pipeline thất bại'
+            echo 'Pipeline thất bại. Lỗi docker.sock: sudo usermod -aG docker jenkins && sudo systemctl restart jenkins (rồi build lại).'
         }
     }
 }

@@ -12,9 +12,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "treatment_cases")
-@Getter 
-@Setter 
-@NoArgsConstructor 
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -57,17 +57,24 @@ public class TreatmentCase {
     @OneToMany(mappedBy = "treatmentCase", cascade = CascadeType.ALL)
     List<Consultation> consultations;
 
+    @OneToMany(mappedBy = "treatmentCase", cascade = CascadeType.ALL)
+    @OrderBy("createdAt DESC")
+    List<TreatmentPlan> treatmentPlans;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
-        if (startDate == null) startDate = LocalDate.now();
-        if (status == null) status = "ACTIVE";
+        if (startDate == null)
+            startDate = LocalDate.now();
+        if (status == null)
+            status = "ACTIVE";
     }
 
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
 }

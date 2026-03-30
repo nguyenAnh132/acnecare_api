@@ -25,8 +25,15 @@ public class GlobalExceptionHandler {
 
     private static final String MIN_ATTRIBUTE = "min";
 
+    // ĐÂY CHÍNH LÀ NƠI TA BẮT "KẺ TÀNG HÌNH"
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse<Void>> handleException(Exception exception) {
+
+        // --- 2 DÒNG THÊM VÀO ĐỂ IN CHI TIẾT LỖI RA TERMINAL ---
+        log.error("CÓ LỖI XẢY RA NHƯNG BỊ BẮT BỞI GLOBAL EXCEPTION HANDLER: ", exception);
+        exception.printStackTrace();
+        // ------------------------------------------------------
+
         ApiResponse<Void> apiResponse = new ApiResponse<>();
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_ERROR.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_ERROR.getMessage());
@@ -37,6 +44,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse<Void>> handleAppException(AppException exception) {
+        // Có thể thêm log ở đây nếu muốn xem các lỗi tự định nghĩa
+        // log.error("AppException: {}", exception.getMessage());
+
         ApiResponse<Void> apiResponse = new ApiResponse<>();
         apiResponse.setCode(exception.getErrorCode().getCode());
         apiResponse.setMessage(exception.getErrorCode().getMessage());
@@ -55,35 +65,36 @@ public class GlobalExceptionHandler {
                 .body(apiResponse);
     }
 
-
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse<Void>> handlingValidation(MethodArgumentNotValidException exception){
-        String enumKey = exception.getFieldError().getDefaultMessage(); //EXCEPTION MESSAGE : INVALID_FIRST_NAME
+    ResponseEntity<ApiResponse<Void>> handlingValidation(MethodArgumentNotValidException exception) {
+        String enumKey = exception.getFieldError().getDefaultMessage(); // EXCEPTION MESSAGE : INVALID_FIRST_NAME
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
         Map<String, Object> attributes = null;
 
-        try{
+        try {
             errorCode = ErrorCode.valueOf(enumKey);
 
             var constraintViolation = exception.getBindingResult()
-                .getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+                    .getAllErrors().getFirst().unwrap(ConstraintViolation.class);
 
             attributes = constraintViolation.getConstraintDescriptor().getAttributes();
 
-        } catch (Exception e){
-
+        } catch (Exception e) {
+            // NÊN THÊM LOG Ở ĐÂY KẺO NUỐT LỖI
+            log.warn("Lỗi khi parse ErrorCode từ Validation: ", e);
         }
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(); //Cấu trúc response result?
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(Objects.nonNull(attributes) ? mapAttrubute(errorCode.getMessage(), attributes) : errorCode.getMessage());
+        apiResponse.setMessage(Objects.nonNull(attributes) ? mapAttrubute(errorCode.getMessage(), attributes)
+                : errorCode.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     ResponseEntity<ApiResponse<?>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         String validValues = Arrays.stream(StorageFolder.values())
                 .map(f -> f.getPath())
@@ -93,10 +104,8 @@ public class GlobalExceptionHandler {
                 ApiResponse.builder()
                         .code(ErrorCode.INVALID_STORAGE_FOLDER.getCode())
                         .message("Invalid folder. Allowed values: " + validValues)
-                        .build()
-        );
+                        .build());
     }
-
 
     private String mapAttrubute(String message, Map<String, Object> attributes) {
         String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));

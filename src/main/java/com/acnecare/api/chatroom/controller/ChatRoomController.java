@@ -39,11 +39,7 @@ public class ChatRoomController {
                 .build();
     }
 
-    @GetMapping("/user")
-    /**
-     * Lấy danh sách phòng chat của user đang đăng nhập.
-     * User ID được lấy tự động từ token (SecurityContext).
-     */
+    @PostMapping("/user")
     public ApiResponse<List<ChatRoomResponse>> getUserChatRooms(@Valid @RequestBody ChatRoomGetRequest request) {
         return ApiResponse.<List<ChatRoomResponse>>builder()
                 .code(1000)
@@ -65,7 +61,7 @@ public class ChatRoomController {
 
         return ApiResponse.<Boolean>builder()
                 .code(allowed ? 1000 : 4030)
-                .message(allowed ? "ACCESS_GRANTED" : "ACCESS_DENIED") 
+                .message(allowed ? "ACCESS_GRANTED" : "ACCESS_DENIED")
                 .result(allowed)
                 .build();
     }

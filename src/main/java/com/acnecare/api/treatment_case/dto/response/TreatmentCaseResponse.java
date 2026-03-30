@@ -9,7 +9,11 @@ import java.util.List;
 
 import com.acnecare.api.consultation.dto.response.ConsultationResponse;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TreatmentCaseResponse {
 
@@ -24,6 +28,7 @@ public class TreatmentCaseResponse {
     String chiefComplaint;
     String doctorNote;
     List<ConsultationResponse> consultations;
+    List<TreatmentPlanResponse> treatmentPlans;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }
