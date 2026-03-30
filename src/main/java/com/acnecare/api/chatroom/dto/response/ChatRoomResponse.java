@@ -1,6 +1,5 @@
 package com.acnecare.api.chatroom.dto.response;
 
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +18,6 @@ public class ChatRoomResponse {
     LocalDateTime createdAt;
     LocalDateTime lastMessageAt;
     LocalDateTime updatedAt;
-
-    // User user;
-    // User otherUser;
+    private String userId;
+    private String otherUserId;
 }
