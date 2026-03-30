@@ -1,8 +1,11 @@
 package com.acnecare.api.user.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -13,7 +16,6 @@ import com.acnecare.api.user.dto.response.UserResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,12 +34,29 @@ import jakarta.validation.Valid;
 public class UserController {
     UserService userService;
 
-    @PostMapping
-    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+    // 🚨 CẬP NHẬT: Nhận Multipart form-data để vừa gửi JSON vừa gửi File
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResponse<UserResponse> createUser(
+            @RequestPart("data") @Valid UserCreationRequest request,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar) {
+
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
                 .message("User created successfully")
-                .result(userService.createUser(request))
+                .result(userService.createUser(request, avatar))
+                .build();
+    }
+
+    // 🚨 CẬP NHẬT: Cho phép Upload Avatar khi Update Profile
+    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResponse<UserResponse> updateMyInfo(
+            @RequestPart("data") @Valid UserUpdateRequest request,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar) {
+
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .message("User updated successfully")
+                .result(userService.updateMyInfo(request, avatar))
                 .build();
     }
 
@@ -81,15 +100,6 @@ public class UserController {
                 .code(1000)
                 .message("My info fetched successfully")
                 .result(userService.getMyInfo())
-                .build();
-    }
-
-    @PutMapping("/me")
-    ApiResponse<UserResponse> updateMyInfo(@RequestBody @Valid UserUpdateRequest request) {
-        return ApiResponse.<UserResponse>builder()
-                .code(1000)
-                .message("User updated successfully")
-                .result(userService.updateMyInfo(request))
                 .build();
     }
 
