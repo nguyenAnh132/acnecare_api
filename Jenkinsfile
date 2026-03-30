@@ -60,7 +60,7 @@ pipeline {
 
     post {
         failure {
-            echo 'Pipeline thất bại'
+            echo 'Pipeline thất bại. Lỗi docker.sock: sudo usermod -aG docker jenkins && sudo systemctl restart jenkins (rồi build lại).'
         }
     }
 }
