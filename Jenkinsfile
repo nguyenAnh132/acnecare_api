@@ -46,7 +46,14 @@ pipeline {
                         echo "ERROR: Không có quyền ghi vào ${env.DEPLOY_DIR}. Chạy: sudo chown -R jenkins:jenkins ${env.DEPLOY_DIR}"
                         exit 1
                     fi
-                    rsync -a --delete --no-owner --no-group --exclude '.env' --exclude 'uploads/' '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
+                    rsync -a --delete --no-owner --no-group \
+                      --exclude '.env' \
+                      --exclude 'uploads/' \
+                      --exclude 'mysql-data/' \
+                      --exclude 'redis-data/' \
+                      --filter 'protect mysql-data/' \
+                      --filter 'protect redis-data/' \
+                      '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
                     test -f '${env.DEPLOY_DIR}/.env' || (echo "ERROR: thiếu file .env trong ${env.DEPLOY_DIR}" && exit 1)
                 """
             }
@@ -77,7 +84,7 @@ pipeline {
 
     post {
         failure {
-            echo 'Pipeline thất bại. Lỗi docker.sock: sudo usermod -aG docker jenkins && sudo systemctl restart jenkins (rồi build lại).'
+            echo 'Pipeline thất bại. Docker: sudo usermod -aG docker jenkins && sudo systemctl restart jenkins. Rsync Permission denied trên mysql-data/redis-data: thư mục đó thuộc container; cần Jenkinsfile có --filter protect (đã thêm) hoặc dừng stack trước khi deploy.'
         }
     }
 }
