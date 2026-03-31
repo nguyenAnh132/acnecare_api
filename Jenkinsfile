@@ -49,7 +49,7 @@ pipeline {
         
                     rsync -a --delete \
                       --no-owner --no-group \
-                      --no-times --omit-dir-times \
+                      --no-times --omit-dir-times --no-perms\
                       --exclude '.env' \
                       --exclude 'uploads/' \
                       --exclude 'mysql-data/' \
