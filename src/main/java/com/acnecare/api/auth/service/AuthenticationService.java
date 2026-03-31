@@ -63,7 +63,6 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request)
             throws JOSEException, ParseException, AppException {
 
-
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         var user = userRepository.findByEmail(request.getEmail())
@@ -117,7 +116,7 @@ public class AuthenticationService {
 
     public void logout(LogoutRequest request)
             throws JOSEException, ParseException, AppException {
-        
+
         var signedAccessToken = verifyAccessToken(request.getAccessToken());
         var jtiAccessToken = signedAccessToken.getJWTClaimsSet().getJWTID();
 
