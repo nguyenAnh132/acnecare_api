@@ -43,10 +43,13 @@ pipeline {
                     set -e
                     mkdir -p '${env.DEPLOY_DIR}'
                     if [ ! -w '${env.DEPLOY_DIR}' ]; then
-                        echo "ERROR: Không có quyền ghi vào ${env.DEPLOY_DIR}. Chạy: sudo chown -R jenkins:jenkins ${env.DEPLOY_DIR}"
+                        echo "ERROR: Jenkins không có quyền ghi vào ${env.DEPLOY_DIR}"
                         exit 1
                     fi
-                    rsync -a --delete --no-owner --no-group \
+        
+                    rsync -a --delete \
+                      --no-owner --no-group \
+                      --no-times --omit-dir-times \
                       --exclude '.env' \
                       --exclude 'uploads/' \
                       --exclude 'mysql-data/' \
@@ -54,6 +57,7 @@ pipeline {
                       --filter 'protect mysql-data/' \
                       --filter 'protect redis-data/' \
                       '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
+        
                     test -f '${env.DEPLOY_DIR}/.env' || (echo "ERROR: thiếu file .env trong ${env.DEPLOY_DIR}" && exit 1)
                 """
             }
