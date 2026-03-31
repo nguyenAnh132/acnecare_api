@@ -46,8 +46,8 @@ services:
         condition: service_healthy
       redis-cache:
         condition: service_healthy
-    ports:
-      - "9090:9090"
+    expose:
+      - "9090"
     restart: always
     security_opt:
       - no-new-privileges:true
