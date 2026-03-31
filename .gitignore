@@ -38,3 +38,8 @@ build/
 
 # Upload directory
 uploads/
+
+
+# Environment variables
+.env
+
