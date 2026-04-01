@@ -179,10 +179,18 @@ public class UserService {
     public UserResponse updateMyInfo(UserUpdateRequest request, MultipartFile avatar) {
         User user = getMe();
 
-        userMapper.updateUser(request, user);
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
+        user.setDob(request.getDob());
+        user.setAvatarUrl(request.getAvatarUrl());
         user.setUpdatedAt(LocalDateTime.now());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(getRolesFromRequest(request.getRoles()));
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            user.setRoles(getRolesFromRequest(request.getRoles()));
+        }
 
         // Xử lý upload và ghi đè ảnh mới
         if (avatar != null && !avatar.isEmpty()) {
