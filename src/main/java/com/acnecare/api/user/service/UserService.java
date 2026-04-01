@@ -183,7 +183,9 @@ public class UserService {
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
         user.setDob(request.getDob());
-        user.setAvatarUrl(request.getAvatarUrl());
+        if (request.getAvatarUrl() != null && !request.getAvatarUrl().isBlank()) {
+            user.setAvatarUrl(request.getAvatarUrl());
+        }
         user.setUpdatedAt(LocalDateTime.now());
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
