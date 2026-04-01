@@ -61,6 +61,7 @@ public class AcnePredictionService {
             prediction.setPatient(patient);
         } else {
             prediction.setPatient(currentUser);
+            prediction.setSeverityLevel("Tu dong");
         }
 
         List<AcnePredictionDetail> details = new ArrayList<>();
@@ -93,6 +94,31 @@ public class AcnePredictionService {
                 .stream()
                 .map(acnePredictionMapper::toAcnePredictionResponse)
                 .toList();
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_PATIENT', 'ROLE_DOCTOR', 'ROLE_ADMIN')")
+    public void deletePrediction(String predictionId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = auth.getName();
+
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        AcnePrediction prediction = acnePredictionRepository.findById(predictionId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACNE_PREDICTION_NOT_FOUND));
+
+        boolean isAdmin = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("ADMIN") || r.getName().equals("ROLE_ADMIN"));
+
+        boolean isOwner = prediction.getPatient() != null
+                && currentUserId.equals(prediction.getPatient().getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AppException(ErrorCode.ACCESS_DENIED);
+        }
+
+        acnePredictionRepository.delete(prediction);
     }
 
     private String translateToVn(String className) {
