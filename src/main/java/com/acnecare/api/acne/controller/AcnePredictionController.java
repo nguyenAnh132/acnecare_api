@@ -38,4 +38,13 @@ public class AcnePredictionController {
                 .result(acnePredictionService.getPatientScanHistory(patientId))
                 .build();
     }
+
+    @DeleteMapping("/{predictionId}")
+    public ApiResponse<Void> deletePrediction(@PathVariable String predictionId) {
+        acnePredictionService.deletePrediction(predictionId);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Xóa kết quả phân tích thành công")
+                .build();
+    }
 }
