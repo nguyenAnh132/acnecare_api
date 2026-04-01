@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acnecare.api.common.dto.ApiResponse;
+import com.acnecare.api.post.dto.Response.LikeUpdateResponse;
 import com.acnecare.api.post.service.LikesService;
 
 import lombok.AccessLevel;
@@ -25,9 +26,17 @@ public class LikeController {
     @PostMapping
     public ApiResponse<Void> likePost(@PathVariable String postId){
         boolean liked = likesService.toggleLike(postId);
+        long likesCount = likesService.countLikesByPostId(postId);
         String responseMessage = liked ? "Post liked successfully" : "Post unliked successfully";
 
-        messagingTemplate.convertAndSend("/topic/posts/" + postId + "/likes", liked);
+        LikeUpdateResponse likeUpdate = LikeUpdateResponse.builder()
+            .postId(postId)
+            .liked(liked)
+            .likesCount(likesCount)
+            .build();
+
+        messagingTemplate.convertAndSend("/topic/posts/" + postId + "/likes", likeUpdate);
+        messagingTemplate.convertAndSend("/topic/posts/likes", likeUpdate);
 
         return ApiResponse.<Void> builder()
             .code(1000)
