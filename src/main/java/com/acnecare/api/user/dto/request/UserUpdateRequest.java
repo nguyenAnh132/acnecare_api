@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.hibernate.validator.constraints.URL;
@@ -36,7 +35,6 @@ public class UserUpdateRequest {
     String phone;
 
     @Size(min = 8, max = 100, message = "INVALID_PASSWORD")
-    @NotBlank(message = "INVALID_PASSWORD")
     String password;
 
     @Past(message = "INVALID_DOB")
