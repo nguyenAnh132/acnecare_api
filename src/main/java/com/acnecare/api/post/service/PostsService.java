@@ -3,7 +3,10 @@ package com.acnecare.api.post.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ import com.acnecare.api.post.Repository.PostsImagesRepository;
 import com.acnecare.api.post.Repository.PostsRepository;
 import com.acnecare.api.post.dto.Request.PostsRequest;
 import com.acnecare.api.post.dto.Response.CommentResponse;
+import com.acnecare.api.post.dto.Response.PagedResponse;
 import com.acnecare.api.post.dto.Response.PostsImageResponse;
 import com.acnecare.api.post.dto.Response.PostsResponse;
 import com.acnecare.api.post.dto.Response.UserPostsResponse;
@@ -85,56 +89,55 @@ public class PostsService {
         response.setCommentsCount(commentResponses.size());
     }
 
+    private PostsResponse mapToPostsResponse(Posts post) {
+        PostsResponse response = postsMapper.toPostsResponse(post);
+        User user = post.getUser();
+        if (user != null) {
+            response.setUser(UserPostsResponse.builder()
+                    .id(user.getId())
+                    .role(postsMapper.toRoleResponseSet(user.getRoles()))
+                    .name(user.getFirstName() + " " + user.getLastName())
+                    .avatarUrl(user.getAvatarUrl())
+                    .build());
+        }
+        response.setPostsImage(getPostImages(post.getId()));
+        enrichPostWithLikeInfo(response, post.getId());
+        enrichPostWithCommentInfo(response, post.getId());
+        return response;
+    }
+
     // Lấy tất cả bài viết
     @Transactional(readOnly = true)
-    public List<PostsResponse> getAllPosts() {
-        List<Posts> postsList = postsRepository.findAll();
-        return postsList.stream()
-                .map((post) -> {
-                    PostsResponse response = postsMapper.toPostsResponse(post);
-                    User user = post.getUser();
-                    if (user != null) {
-                        response.setUser(UserPostsResponse.builder()
-                                .id(user.getId())
-                                .role(postsMapper.toRoleResponseSet(user.getRoles()))
-                                .name(user.getFirstName() + " " + user.getLastName())
-                                .avatarUrl(user.getAvatarUrl())
-                                .build());
-                    }
-                    response.setPostsImage(getPostImages(post.getId()));
-                    enrichPostWithLikeInfo(response, post.getId());
-                    enrichPostWithCommentInfo(response, post.getId());
-                    return response;
-                })
-                .toList();
+    public PagedResponse<PostsResponse> getAllPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        Page<Posts> postsPage = postsRepository.findAll(pageable);
+
+        return PagedResponse.<PostsResponse>builder()
+                .content(postsPage.getContent().stream().map(this::mapToPostsResponse).toList())
+                .page(postsPage.getNumber())
+                .size(postsPage.getSize())
+                .totalElements(postsPage.getTotalElements())
+                .totalPages(postsPage.getTotalPages())
+                .build();
     }
     // làm lazy loading cho user trong posts response
 
     // Lấy danh sách bài viết theo userId
-    public List<PostsResponse> getPostsByUserId(String userId) {
+    public PagedResponse<PostsResponse> getPostsByUserId(String userId, int page, int size) {
         var isValidUser = userRepository.existsById(userId);
         if (!isValidUser) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
-        List<Posts> postsList = postsRepository.findByUserId(userId);
-        return postsList.stream()
-                .map((post) -> {
-                    PostsResponse response = postsMapper.toPostsResponse(post);
-                    User user = post.getUser();
-                    if (user != null) {
-                        response.setUser(UserPostsResponse.builder()
-                                .id(user.getId())
-                                .role(postsMapper.toRoleResponseSet(user.getRoles()))
-                                .name(user.getFirstName() + " " + user.getLastName())
-                                .avatarUrl(user.getAvatarUrl())
-                                .build());
-                    }
-                    response.setPostsImage(getPostImages(post.getId()));
-                    enrichPostWithLikeInfo(response, post.getId());
-                    enrichPostWithCommentInfo(response, post.getId());
-                    return response;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        Page<Posts> postsPage = postsRepository.findByUserId(userId, pageable);
 
-                }).toList();
+        return PagedResponse.<PostsResponse>builder()
+                .content(postsPage.getContent().stream().map(this::mapToPostsResponse).toList())
+                .page(postsPage.getNumber())
+                .size(postsPage.getSize())
+                .totalElements(postsPage.getTotalElements())
+                .totalPages(postsPage.getTotalPages())
+                .build();
     }
 
     // làm lazy loading cho user trong posts response

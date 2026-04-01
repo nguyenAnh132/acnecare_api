@@ -1,7 +1,5 @@
 package com.acnecare.api.post.controller;
 
-import java.util.List;
-
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acnecare.api.common.dto.ApiResponse;
 import com.acnecare.api.post.dto.Request.PostsRequest;
+import com.acnecare.api.post.dto.Response.PagedResponse;
 import com.acnecare.api.post.dto.Response.PostsResponse;
 import com.acnecare.api.post.service.PostsService;
 
@@ -35,10 +35,12 @@ public class PostsController {
     SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
-    ApiResponse<List<PostsResponse>> getAllPosts() {
-        List<PostsResponse> response = postsService.getAllPosts();
+    ApiResponse<PagedResponse<PostsResponse>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PagedResponse<PostsResponse> response = postsService.getAllPosts(page, size);
 
-        return ApiResponse.<List<PostsResponse>>builder()
+        return ApiResponse.<PagedResponse<PostsResponse>>builder()
                 .code(1000)
                 .message("Posts have been retrieved successfully")
                 .result(response)
@@ -46,10 +48,13 @@ public class PostsController {
     }
 
     @GetMapping("/users/{userId}")
-    ApiResponse<List<PostsResponse>> getPostsByUserId(@PathVariable String userId) {
-        List<PostsResponse> response = postsService.getPostsByUserId(userId);
+    ApiResponse<PagedResponse<PostsResponse>> getPostsByUserId(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PagedResponse<PostsResponse> response = postsService.getPostsByUserId(userId, page, size);
 
-        return ApiResponse.<List<PostsResponse>>builder()
+        return ApiResponse.<PagedResponse<PostsResponse>>builder()
                 .code(1000)
                 .message("Posts have been retrieved successfully")
                 .result(response)
