@@ -53,7 +53,9 @@ pipeline {
                       --exclude '.env' \
                       --exclude 'uploads/' \
                       --exclude 'mysql-data/' \
+                      --exclude 'redis-data/' \
                       --filter 'protect mysql-data/' \
+                      --filter 'protect redis-data/' \
                       '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
         
                     test -f '${env.DEPLOY_DIR}/.env' || (echo "ERROR: thiếu file .env trong ${env.DEPLOY_DIR}" && exit 1)
