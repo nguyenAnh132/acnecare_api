@@ -53,9 +53,7 @@ pipeline {
                       --exclude '.env' \
                       --exclude 'uploads/' \
                       --exclude 'mysql-data/' \
-                      --exclude 'redis-data/' \
                       --filter 'protect mysql-data/' \
-                      --filter 'protect redis-data/' \
                       '${env.WORKSPACE}/${params.SOURCE_REL_PATH}/' '${env.DEPLOY_DIR}/'
         
                     test -f '${env.DEPLOY_DIR}/.env' || (echo "ERROR: thiếu file .env trong ${env.DEPLOY_DIR}" && exit 1)
@@ -68,7 +66,7 @@ pipeline {
                     set -e
                     cd '${env.DEPLOY_DIR}'
                     docker compose -f Docker-compose.yml config -q
-                    docker compose -f Docker-compose.yml pull mysql-db redis-cache
+                    docker compose -f Docker-compose.yml pull mysql-db
                     docker compose -f Docker-compose.yml up -d --build --force-recreate
                 """
             }
@@ -80,7 +78,7 @@ pipeline {
                     set -e
                     cd '${env.DEPLOY_DIR}'
                     docker compose -f Docker-compose.yml ps
-                    test "\$(docker compose -f Docker-compose.yml ps --status running --services | wc -l)" -ge 3 || (echo "ERROR: chưa đủ service chạy ổn định" && exit 1)
+                    test "\$(docker compose -f Docker-compose.yml ps --status running --services | wc -l)" -ge 2 || (echo "ERROR: chưa đủ service chạy ổn định" && exit 1)
                 """
             }
         }

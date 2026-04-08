@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
+import com.acnecare.api.user.dto.request.UserChangePasswordRequest;
+import com.acnecare.api.user.dto.request.UserCreatePasswordRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import com.acnecare.api.patient.service.PatientProfileService;
@@ -211,6 +213,30 @@ public class UserService {
         }
 
         return userMapper.toUserCreationResponse(userRepository.save(user));
+    }
+
+    public void changeMyPassword(UserChangePasswordRequest request) {
+        User user = getMe();
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.OLD_PASSWORD_INCORRECT);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
+    public void createMyPassword(UserCreatePasswordRequest request) {
+        User user = getMe();
+
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            throw new AppException(ErrorCode.PASSWORD_ALREADY_SET);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     public List<UserResponse> getAllUsersByRole(String roleName) {

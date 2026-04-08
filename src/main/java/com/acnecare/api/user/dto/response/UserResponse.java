@@ -28,6 +28,8 @@ public class UserResponse {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     LocalDateTime lastLoginAt;
+    boolean hasPassword;
+    boolean googleLinked;
 
     Set<Role> roles;
 }

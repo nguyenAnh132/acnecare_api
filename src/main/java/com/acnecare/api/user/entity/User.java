@@ -36,6 +36,7 @@ public class User {
     String firstName;
     String lastName;
     String email;
+    String googleSub;
     String phone;
     String password;
     LocalDate dob;

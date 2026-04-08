@@ -18,22 +18,6 @@ services:
     restart: always
     volumes:
       - ./mysql-data:/var/lib/mysql
-    
-
-  # --- Service Cache: Redis ---
-  redis-cache:
-    image: redis:alpine
-    container_name: acnecare-redis
-    networks:
-      - acnecare-network
-    restart: always
-    volumes:
-      - ./redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   # --- Service App: AcneCare API ---
   app:
@@ -43,8 +27,6 @@ services:
     container_name: acnecare-app
     depends_on:
       mysql-db:
-        condition: service_healthy
-      redis-cache:
         condition: service_healthy
     ports:
       - "127.0.0.1:9090:9090"
@@ -72,8 +54,3 @@ networks:
   acnecare-network:
     driver: bridge
 
-volumes:
-  mysql-data:
-    driver: local
-  redis-data:
-    driver: local

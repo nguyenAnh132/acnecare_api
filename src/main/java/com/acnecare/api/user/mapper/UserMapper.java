@@ -9,8 +9,6 @@ import java.util.List;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
 import org.mapstruct.MappingTarget;
 
-import java.util.stream.Collectors;
-
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
@@ -19,6 +17,8 @@ public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
     void updateUser(UserUpdateRequest request, @MappingTarget User user);
 
+    @Mapping(target = "hasPassword", expression = "java(user.getPassword() != null && !user.getPassword().isBlank())")
+    @Mapping(target = "googleLinked", expression = "java(user.getGoogleSub() != null && !user.getGoogleSub().isBlank())")
     UserResponse toUserCreationResponse(User user);
 
     List<UserResponse> toUserCreationResponses(List<User> users);

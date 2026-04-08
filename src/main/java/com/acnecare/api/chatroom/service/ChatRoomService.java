@@ -17,6 +17,7 @@ import com.acnecare.api.chatroom.repository.ChatRoomRepository;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.common.exception.ErrorCode;
 import com.acnecare.api.user.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +42,21 @@ public class ChatRoomService {
      * @throws AppException nếu user không tồn tại
      */
     public ChatRoomResponse createChatRoom(ChatRoomCreationRequest request) {
+        return createOrGetChatRoomBetweenUsers(request.getSenderId(), request.getReceiverId());
+    }
 
-        String userId1 = request.getReceiverId();
-        String userId2 = request.getSenderId();
+    public ChatRoomResponse createSupportChatRoomForCurrentUser() {
+        String senderId = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        User supportAdmin = userRepository
+                .findFirstByRoles_NameAndIdNotAndStatusOrderByCreatedAtAsc("ADMIN", senderId, "ACTIVE")
+                .or(() -> userRepository.findFirstByRoles_NameAndStatusOrderByCreatedAtAsc("ADMIN", "ACTIVE"))
+                .orElseThrow(() -> new AppException(ErrorCode.SUPPORT_ADMIN_NOT_FOUND));
+
+        return createOrGetChatRoomBetweenUsers(senderId, supportAdmin.getId());
+    }
+
+    private ChatRoomResponse createOrGetChatRoomBetweenUsers(String userId1, String userId2) {
         String idA = userId1.compareTo(userId2) < 0 ? userId1 : userId2;
         String idB = userId1.compareTo(userId2) < 0 ? userId2 : userId1;
 

@@ -41,6 +41,21 @@ public class AuthenticationFacade {
         return authenticationResponse;
     }
 
+    public AuthenticationResponse outboundAuthenticate(String code,
+            HttpServletResponse httpResponse,
+            HttpServletRequest httpRequest
+    ) {
+        AuthenticationResponse authenticationResponse = authenticationService.outboundAuthenticate(code);
+
+        String clientType = getClientType(httpRequest);
+        if(!clientType.equals(ClientType.MOBILE.name())) {
+            authCookieService.setAccessToken(httpResponse, authenticationResponse.getAccessToken());
+            authCookieService.setRefreshToken(httpResponse, authenticationResponse.getRefreshToken());
+        }
+
+        return authenticationResponse;
+    }
+
     public AuthenticationResponse refreshToken(RefreshRequest body,
             HttpServletResponse httpResponse,
             HttpServletRequest httpRequest

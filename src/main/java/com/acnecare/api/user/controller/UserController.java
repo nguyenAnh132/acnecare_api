@@ -19,7 +19,10 @@ import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.acnecare.api.user.dto.request.UserUpdateRequest;
+import com.acnecare.api.user.dto.request.UserChangePasswordRequest;
+import com.acnecare.api.user.dto.request.UserCreatePasswordRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.stream.Collectors;
@@ -57,6 +60,24 @@ public class UserController {
                 .code(1000)
                 .message("User updated successfully")
                 .result(userService.updateMyInfo(request, avatar))
+                .build();
+    }
+
+    @PutMapping("/me/change-password")
+    ApiResponse<Void> changeMyPassword(@RequestBody @Valid UserChangePasswordRequest request) {
+        userService.changeMyPassword(request);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Password changed successfully")
+                .build();
+    }
+
+    @PutMapping("/me/create-password")
+    ApiResponse<Void> createMyPassword(@RequestBody @Valid UserCreatePasswordRequest request) {
+        userService.createMyPassword(request);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Password created successfully")
                 .build();
     }
 

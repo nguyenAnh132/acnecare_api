@@ -33,6 +33,8 @@ public enum ErrorCode {
         INVALID_CLIENT_TYPE(1012, "Invalid client type", HttpStatus.BAD_REQUEST),
         PERMISSION_NOT_FOUND(1013, "Permission not found", HttpStatus.NOT_FOUND),
         USER_IS_BLOCKED(1014, "Your account has been blocked. Please contact Admin!", HttpStatus.FORBIDDEN),
+        PASSWORD_ALREADY_SET(1015, "Password already set for this account", HttpStatus.BAD_REQUEST),
+        PASSWORD_LOGIN_NOT_ENABLED(1016, "This account is using Google sign-in. Please create a password first.", HttpStatus.BAD_REQUEST),
 
         // ==========================================
         // 2. PATIENT PROFILE ERRORS (1100 - 1199)
@@ -53,6 +55,8 @@ public enum ErrorCode {
         INVALID_REQUEST(1113, "Invalid request", HttpStatus.BAD_REQUEST),
         PATIENT_PROFILE_NOT_FOUND(1114, "Patient profile not found", HttpStatus.NOT_FOUND),
         PATIENT_PROFILE_ALREADY_EXISTS(1115, "Patient profile already exists", HttpStatus.BAD_REQUEST),
+        INVALID_OLD_PASSWORD(1116, "Old password is required", HttpStatus.BAD_REQUEST),
+        OLD_PASSWORD_INCORRECT(1117, "Old password is incorrect", HttpStatus.BAD_REQUEST),
 
         // ==========================================
         // 3. CATEGORY & PRODUCT ERRORS (2000 - 2099)
@@ -90,6 +94,7 @@ public enum ErrorCode {
         DOCTOR_PROFILE_NOT_APPROVED(3014, "Doctor profile is not approved", HttpStatus.FORBIDDEN),
         COMMENT_NOT_FOUND(3020, "Comment not found", HttpStatus.NOT_FOUND),
         BRAND_PROFILE_NOT_APPROVED(3021, "Brand profile is not approved", HttpStatus.FORBIDDEN),
+        SUPPORT_ADMIN_NOT_FOUND(3022, "Support admin not found", HttpStatus.NOT_FOUND),
 
         // ==========================================
         // 5. APPOINTMENT & CHATROOM ERRORS (4000 - 4099)

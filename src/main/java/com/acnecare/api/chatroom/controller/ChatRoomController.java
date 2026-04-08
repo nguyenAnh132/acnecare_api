@@ -39,6 +39,15 @@ public class ChatRoomController {
                 .build();
     }
 
+    @PostMapping("/support")
+    ApiResponse<ChatRoomResponse> createSupportChatRoom() {
+        return ApiResponse.<ChatRoomResponse>builder()
+                .code(1000)
+                .message("Support room created successfully")
+                .result(chatRoomService.createSupportChatRoomForCurrentUser())
+                .build();
+    }
+
     @PostMapping("/user")
     public ApiResponse<List<ChatRoomResponse>> getUserChatRooms(@Valid @RequestBody ChatRoomGetRequest request) {
         return ApiResponse.<List<ChatRoomResponse>>builder()

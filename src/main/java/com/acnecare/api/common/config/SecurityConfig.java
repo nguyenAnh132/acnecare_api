@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +44,7 @@ public class SecurityConfig {
             "/auth/login",
             "/auth/introspect",
             "/auth/refresh",
+            "/auth/outbound/authentication",
             "/messages/**",
             "/chatroom/**",
             "/messages/",
@@ -108,8 +110,12 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin(allowOrigin);
+        Arrays.stream(allowOrigin.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .forEach(corsConfiguration::addAllowedOrigin);
         corsConfiguration.addAllowedOriginPattern("http://localhost:5173");
+        corsConfiguration.addAllowedOriginPattern("http://localhost:3000");
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
 

@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import com.acnecare.api.common.exception.AppException;
 import com.acnecare.api.auth.facade.AuthenticationFacade;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/auth")
@@ -43,6 +44,19 @@ public class AuthenticationController {
             .message("Login successful")
             .result(authenticationFacade.authenticate(request, httpResponse, httpRequest))
             .build();
+    }
+
+    @PostMapping("/outbound/authentication")
+    ApiResponse<AuthenticationResponse> outboundAuthenticate(
+            @RequestParam("code") String code,
+            HttpServletResponse httpResponse,
+            HttpServletRequest httpRequest
+    ) {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .code(1000)
+                .message("Outbound authentication successful")
+                .result(authenticationFacade.outboundAuthenticate(code, httpResponse, httpRequest))
+                .build();
     }
 
     @PostMapping("/logout")
